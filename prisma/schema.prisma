@@ -1,0 +1,92 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  name          String
+  email         String         @unique
+  passwordHash  String
+  phone         String?
+  createdAt     DateTime       @default(now())
+  athletes      Athlete[]
+  subscriptions Subscription[]
+}
+
+enum Polo {
+  SANTANA
+  BARUERI
+  OSASCO
+}
+
+model Athlete {
+  id            String         @id @default(cuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name          String
+  birthDate     DateTime
+  polo          Polo
+  photoUrl      String?
+  publicSlug    String         @unique
+  createdAt     DateTime       @default(now())
+  matches       Match[]
+  subscriptions Subscription[]
+}
+
+enum Position {
+  GOLEIRO
+  FIXO
+  ALA
+  PIVO
+}
+
+model Match {
+  id             String       @id @default(cuid())
+  athleteId      String
+  athlete        Athlete      @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  date           DateTime
+  opponent       String
+  goals          Int          @default(0)
+  assists        Int          @default(0)
+  defensivePlays Int          @default(0)
+  position       Position
+  notes          String?
+  createdAt      DateTime     @default(now())
+  photos         MatchPhoto[]
+}
+
+model MatchPhoto {
+  id      String @id @default(cuid())
+  matchId String
+  match   Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  url     String
+}
+
+enum Plan {
+  TORCIDA
+  CRAQUE
+}
+
+enum SubStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+}
+
+model Subscription {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  athleteId   String
+  athlete     Athlete   @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  plan        Plan
+  status      SubStatus @default(PENDING)
+  requestedAt DateTime  @default(now())
+  confirmedAt DateTime?
+  confirmedBy String?
+}

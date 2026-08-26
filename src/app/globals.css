@@ -1,0 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-c10-white text-c10-blue-dark font-sans;
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center rounded-card bg-c10-blue px-5 py-3 font-semibold text-white transition hover:bg-c10-blue-dark disabled:opacity-50;
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center rounded-card border-2 border-c10-blue px-5 py-3 font-semibold text-c10-blue transition hover:bg-c10-blue hover:text-white;
+}
+
+.card {
+  @apply rounded-card border border-black/5 bg-white p-6 shadow-sm;
+}
+
+.card-accent {
+  @apply rounded-card bg-c10-orange/10 p-6;
+}
+
+.input {
+  @apply w-full rounded-lg border border-black/15 px-4 py-2.5 outline-none focus:border-c10-blue focus:ring-2 focus:ring-c10-blue/20;
+}
+
+.label {
+  @apply mb-1.5 block text-sm font-medium text-c10-blue-dark/80;
+}
