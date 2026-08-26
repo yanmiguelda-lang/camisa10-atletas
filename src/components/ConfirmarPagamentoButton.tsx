@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Button from "@/components/Button";
 
 export function ConfirmarPagamentoButton({ subscriptionId }: { subscriptionId: string }) {
   const router = useRouter();
@@ -19,8 +20,8 @@ export function ConfirmarPagamentoButton({ subscriptionId }: { subscriptionId: s
   }
 
   return (
-    <button className="btn-primary shrink-0" onClick={confirmar} disabled={carregando}>
+    <Button onClick={confirmar} variant="primary" size="sm" disabled={carregando}>
       {carregando ? "Confirmando..." : "Confirmar pagamento"}
-    </button>
+    </Button>
   );
 }

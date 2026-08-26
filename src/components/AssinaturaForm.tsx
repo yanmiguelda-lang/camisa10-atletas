@@ -1,77 +1,88 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { PLANOS, type PlanoKey } from "@/lib/pix";
+import { PixCheckout } from "@/components/PixCheckout";
+import Link from "next/link";
 
-export function AssinaturaForm({
-  athleteId,
-  pixKey,
-  pixNome,
-}: {
-  athleteId: string;
-  pixKey: string;
-  pixNome: string;
-}) {
-  const router = useRouter();
-  const [plano, setPlano] = useState<PlanoKey>("TORCIDA");
+export function AssinaturaForm({ athleteId, parentName }: { athleteId: string; parentName: string }) {
   const [carregando, setCarregando] = useState(false);
-  const [copiado, setCopiado] = useState(false);
+  const [plano, setPlano] = useState<PlanoKey | null>(null);
+  const [pix, setPix] = useState<{ txid: string; pixPayload: string; plan: PlanoKey } | null>(null);
 
-  async function confirmarPix() {
+  async function escolherPlano(key: PlanoKey) {
+    if (carregando) return;
+    setPlano(key);
     setCarregando(true);
-    await fetch("/api/assinatura", {
+    const res = await fetch("/api/assinatura", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ athleteId, plan: plano }),
+      body: JSON.stringify({ athleteId, plan: key }),
     });
     setCarregando(false);
-    router.refresh();
-  }
-
-  async function copiarChave() {
-    try {
-      await navigator.clipboard.writeText(pixKey);
-      setCopiado(true);
-      setTimeout(() => setCopiado(false), 2000);
-    } catch {
-      // clipboard indisponível — usuário copia manualmente
+    if (res.ok) {
+      const data = await res.json();
+      setPix({ txid: data.txid, pixPayload: data.pixPayload, plan: data.plan });
     }
   }
 
+  if (pix) {
+    return <PixCheckout plan={pix.plan} txid={pix.txid} pixPayload={pix.pixPayload} parentName={parentName} />;
+  }
+
   return (
-    <div className="space-y-4">
-      <div className="grid gap-3">
-        {(Object.keys(PLANOS) as PlanoKey[]).map((key) => (
-          <button
-            key={key}
-            type="button"
-            onClick={() => setPlano(key)}
-            className={`card text-left transition ${
-              plano === key ? "ring-2 ring-c10-blue" : "opacity-80 hover:opacity-100"
-            }`}
-          >
-            <p className="font-semibold">
-              {PLANOS[key].label} — R$ {PLANOS[key].preco}/mês
-            </p>
-            <p className="text-sm text-c10-blue-dark/70">{PLANOS[key].descricao}</p>
-          </button>
-        ))}
-      </div>
-
-      <div className="card-accent">
-        <p className="text-sm font-medium text-c10-blue-dark/80">Chave PIX ({pixNome})</p>
-        <div className="mt-1 flex items-center justify-between gap-2">
-          <code className="break-all text-sm">{pixKey || "Chave PIX não configurada"}</code>
-          <button type="button" onClick={copiarChave} className="shrink-0 text-sm font-semibold text-c10-blue">
-            {copiado ? "Copiado!" : "Copiar"}
-          </button>
-        </div>
-      </div>
-
-      <button className="btn-primary w-full" onClick={confirmarPix} disabled={carregando}>
-        {carregando ? "Enviando..." : "Já fiz o PIX"}
-      </button>
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      {(Object.entries(PLANOS) as [PlanoKey, (typeof PLANOS)[PlanoKey]][]).map(([key, p]) => (
+        <button
+          key={key}
+          type="button"
+          onClick={() => escolherPlano(key)}
+          disabled={carregando}
+          style={{
+            textAlign: "left",
+            padding: "20px 22px",
+            borderRadius: 14,
+            border: `2px solid ${key === "CRAQUE" ? "rgba(249,115,22,0.40)" : "rgba(30,58,138,0.25)"}`,
+            background: key === "CRAQUE" ? "rgba(249,115,22,0.06)" : "rgba(30,58,138,0.05)",
+            cursor: carregando ? "not-allowed" : "pointer",
+            opacity: carregando && plano !== key ? 0.5 : 1,
+            position: "relative",
+          }}
+        >
+          {key === "CRAQUE" && (
+            <div
+              style={{
+                position: "absolute",
+                top: -10,
+                right: 16,
+                background: "linear-gradient(135deg,#F97316,#ea6c10)",
+                color: "white",
+                fontSize: 10,
+                fontWeight: 800,
+                padding: "3px 10px",
+                borderRadius: 99,
+                letterSpacing: 1,
+              }}
+            >
+              POPULAR
+            </div>
+          )}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+            <div style={{ fontWeight: 800, fontSize: 17, color: key === "TORCIDA" ? "#1E3A8A" : p.cor }}>
+              {key === "TORCIDA" ? "🔵" : "🟠"} Plano {p.label}
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: key === "TORCIDA" ? "#1E3A8A" : p.cor }}>
+              R${p.preco}
+              <span style={{ fontSize: 12, fontWeight: 400, color: "#999" }}>/mês</span>
+            </div>
+          </div>
+          <div style={{ fontSize: 13, color: "#666", lineHeight: 1.5 }}>{p.descricao}</div>
+          {carregando && plano === key && <div style={{ marginTop: 10, fontSize: 12, color: "#666" }}>Gerando PIX...</div>}
+        </button>
+      ))}
+      <Link href="/dashboard" style={{ textAlign: "center", fontSize: 13, color: "#666", textDecoration: "none", marginTop: 4 }}>
+        ← Voltar
+      </Link>
     </div>
   );
 }

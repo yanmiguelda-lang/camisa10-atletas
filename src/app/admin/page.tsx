@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PLANOS } from "@/lib/pix";
+import { DashboardNav } from "@/components/DashboardNav";
 import { ConfirmarPagamentoButton } from "@/components/ConfirmarPagamentoButton";
 
 export default async function AdminPage() {
@@ -20,34 +21,47 @@ export default async function AdminPage() {
   });
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="mb-1 text-2xl font-bold">Pagamentos pendentes</h1>
-      <p className="mb-6 text-sm text-c10-blue-dark/60">
-        Confirme aqui assim que o PIX cair na conta do clube.
-      </p>
+    <main style={{ minHeight: "100vh", background: "#060E20", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0 }}>
+        <div className="bg-orb bg-orb-1" />
+        <div className="bg-orb bg-orb-2" />
+      </div>
+      <div style={{ position: "relative", zIndex: 1 }}>
+        <DashboardNav isAdmin />
+        <div style={{ maxWidth: 740, margin: "0 auto", padding: "36px 20px 60px" }}>
+          <h1 className="text-gradient" style={{ fontSize: 22, fontWeight: 800, marginBottom: 4 }}>
+            Pagamentos pendentes
+          </h1>
+          <p style={{ color: "#94a3b8", fontSize: 14, marginBottom: 28 }}>Confirme aqui assim que o PIX cair na conta do clube.</p>
 
-      <div className="space-y-3">
-        {pendentes.map((s) => (
-          <div key={s.id} className="card flex items-center justify-between gap-4">
-            <div>
-              <p className="font-semibold">
-                {s.athlete.name} — Plano {PLANOS[s.plan].label} (R$ {PLANOS[s.plan].preco})
-              </p>
-              <p className="text-sm text-c10-blue-dark/60">
-                Responsável: {s.user.name} ({s.user.email}
-                {s.user.phone ? ` · ${s.user.phone}` : ""})
-              </p>
-              <p className="text-xs text-c10-blue-dark/40">
-                Pedido em {new Date(s.requestedAt).toLocaleString("pt-BR")}
-              </p>
-            </div>
-            <ConfirmarPagamentoButton subscriptionId={s.id} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {pendentes.map((s) => (
+              <div
+                key={s.id}
+                className="card"
+                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "18px 22px", flexWrap: "wrap" }}
+              >
+                <div>
+                  <p style={{ fontWeight: 700, color: "#fff", fontSize: 15 }}>
+                    {s.athlete.name} — Plano {PLANOS[s.plan].label} (R$ {PLANOS[s.plan].preco})
+                  </p>
+                  <p style={{ fontSize: 13, color: "#94a3b8", marginTop: 2 }}>
+                    Responsável: {s.user.name} ({s.user.email}
+                    {s.user.phone ? ` · ${s.user.phone}` : ""})
+                  </p>
+                  <p style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>Pedido em {new Date(s.requestedAt).toLocaleString("pt-BR")}</p>
+                </div>
+                <ConfirmarPagamentoButton subscriptionId={s.id} />
+              </div>
+            ))}
+
+            {pendentes.length === 0 && (
+              <div style={{ borderRadius: 20, padding: "48px 24px", textAlign: "center", background: "rgba(12,27,54,0.6)", border: "1.5px solid rgba(255,255,255,0.08)" }}>
+                <p style={{ color: "#94a3b8", fontSize: 14 }}>Nenhum pagamento pendente no momento.</p>
+              </div>
+            )}
           </div>
-        ))}
-
-        {pendentes.length === 0 && (
-          <p className="text-c10-blue-dark/60">Nenhum pagamento pendente no momento.</p>
-        )}
+        </div>
       </div>
     </main>
   );

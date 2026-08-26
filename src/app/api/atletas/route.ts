@@ -12,10 +12,12 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-  const { name, birthDate, polo, photoUrl } = body as {
+  const { name, birthDate, polo, position, jerseyNumber, photoUrl } = body as {
     name?: string;
     birthDate?: string;
     polo?: string;
+    position?: string;
+    jerseyNumber?: number;
     photoUrl?: string;
   };
 
@@ -29,6 +31,8 @@ export async function POST(req: Request) {
       name,
       birthDate: new Date(birthDate),
       polo: polo as "SANTANA" | "BARUERI" | "OSASCO",
+      position: position ? (position as "GOLEIRO" | "FIXO" | "ALA" | "PIVO") : undefined,
+      jerseyNumber: jerseyNumber ?? undefined,
       photoUrl,
       publicSlug: gerarSlug(name),
     },

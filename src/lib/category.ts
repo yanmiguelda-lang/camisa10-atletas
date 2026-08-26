@@ -1,7 +1,7 @@
-/** Categoria de base (Sub 7 a Sub 11) calculada pela idade no ano corrente da temporada. */
+/** Categoria de base (Sub 7 a Sub 12) calculada pela idade no ano corrente da temporada. */
 export function calcularCategoria(birthDate: Date, referenceYear = new Date().getFullYear()): string {
   const idade = referenceYear - birthDate.getFullYear();
-  const clamped = Math.min(Math.max(idade, 7), 11);
+  const clamped = Math.min(Math.max(idade, 7), 12);
   return `Sub ${clamped}`;
 }
 

@@ -30,7 +30,9 @@ model Athlete {
   user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   name          String
   birthDate     DateTime
+  jerseyNumber  Int?
   polo          Polo
+  position      Position?
   photoUrl      String?
   publicSlug    String         @unique
   createdAt     DateTime       @default(now())

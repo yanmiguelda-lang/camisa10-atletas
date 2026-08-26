@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { PLANOS, generatePixPayload, type PlanoKey } from "@/lib/pix";
+
+function txidFromSubscription(subscriptionId: string): string {
+  return `C10-${subscriptionId.slice(-8).toUpperCase()}`;
+}
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
@@ -23,16 +28,18 @@ export async function POST(req: Request) {
   }
 
   // Evita duplicar um pedido pendente pro mesmo atleta.
-  const jaPendente = await prisma.subscription.findFirst({
+  let subscription = await prisma.subscription.findFirst({
     where: { athleteId, status: "PENDING" },
   });
-  if (jaPendente) {
-    return NextResponse.json(jaPendente);
+
+  if (!subscription) {
+    subscription = await prisma.subscription.create({
+      data: { userId, athleteId, plan: plan as "TORCIDA" | "CRAQUE", status: "PENDING" },
+    });
   }
 
-  const subscription = await prisma.subscription.create({
-    data: { userId, athleteId, plan: plan as "TORCIDA" | "CRAQUE", status: "PENDING" },
-  });
+  const txid = txidFromSubscription(subscription.id);
+  const pixPayload = generatePixPayload(txid, PLANOS[subscription.plan as PlanoKey].preco);
 
-  return NextResponse.json(subscription);
+  return NextResponse.json({ ...subscription, txid, pixPayload });
 }

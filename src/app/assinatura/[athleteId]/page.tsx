@@ -2,15 +2,16 @@ import { notFound } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { PLANOS, chavePix, nomeBeneficiarioPix } from "@/lib/pix";
+import { PLANOS, generatePixPayload, type PlanoKey } from "@/lib/pix";
 import { AssinaturaForm } from "@/components/AssinaturaForm";
+import { PixCheckout } from "@/components/PixCheckout";
 
 export default async function AssinaturaPage({ params }: { params: { athleteId: string } }) {
   const session = await getServerSession(authOptions);
   const userId = (session?.user as { id?: string } | undefined)?.id;
 
   const atleta = userId
-    ? await prisma.athlete.findFirst({ where: { id: params.athleteId, userId } })
+    ? await prisma.athlete.findFirst({ where: { id: params.athleteId, userId }, include: { user: true } })
     : null;
 
   if (!atleta) notFound();
@@ -20,25 +21,32 @@ export default async function AssinaturaPage({ params }: { params: { athleteId: 
   });
 
   return (
-    <main className="mx-auto max-w-md px-6 py-12">
-      <h1 className="mb-1 text-2xl font-bold">Assinar plano — {atleta.name}</h1>
-      <p className="mb-6 text-sm text-c10-blue-dark/60">
-        Pagamento via PIX. Depois de pagar, clique em &quot;Já fiz o PIX&quot; — o
-        Camisa 10 FC confirma o recebimento e libera o plano em até 1 dia útil.
-      </p>
+    <main
+      style={{ minHeight: "100vh", background: "#F0F0F0", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 20px", position: "relative", overflow: "hidden" }}
+    >
+      <div className="bg-orb bg-orb-1" />
+      <div className="bg-orb bg-orb-2" />
+      <div className="bg-orb bg-orb-3" />
 
-      {pendente ? (
-        <div className="card-accent">
-          <p className="font-semibold">
-            Pedido do plano {PLANOS[pendente.plan].label} registrado — aguardando confirmação do pagamento.
-          </p>
-          <p className="mt-1 text-sm text-c10-blue-dark/70">
-            Qualquer dúvida, fale com o Camisa 10 FC pelo WhatsApp da sua escolinha.
-          </p>
-        </div>
-      ) : (
-        <AssinaturaForm athleteId={atleta.id} pixKey={chavePix()} pixNome={nomeBeneficiarioPix()} />
-      )}
+      <div className="card-light" style={{ width: "100%", maxWidth: 440, padding: "36px 32px", position: "relative", zIndex: 1 }}>
+        {!pendente && (
+          <>
+            <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 6, color: "#0A0A0A" }}>Assinar plano</h1>
+            <p style={{ color: "#666", fontSize: 14, marginBottom: 24 }}>Para {atleta.name}</p>
+          </>
+        )}
+
+        {pendente ? (
+          <PixCheckout
+            plan={pendente.plan as PlanoKey}
+            txid={`C10-${pendente.id.slice(-8).toUpperCase()}`}
+            pixPayload={generatePixPayload(`C10-${pendente.id.slice(-8).toUpperCase()}`, PLANOS[pendente.plan as PlanoKey].preco)}
+            parentName={atleta.user.name}
+          />
+        ) : (
+          <AssinaturaForm athleteId={atleta.id} parentName={atleta.user.name} />
+        )}
+      </div>
     </main>
   );
 }
