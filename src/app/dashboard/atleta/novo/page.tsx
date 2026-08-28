@@ -24,6 +24,9 @@ export default function NovoAtletaPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // Captura a referência do form já aqui — depois de um `await`, o navegador
+    // zera `e.currentTarget` porque o evento original já terminou de despachar.
+    const formEl = e.currentTarget;
     setErro(null);
     setCarregando(true);
 
@@ -38,7 +41,7 @@ export default function NovoAtletaPage() {
       }
     }
 
-    const form = new FormData(e.currentTarget);
+    const form = new FormData(formEl);
     const res = await fetch("/api/atletas", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

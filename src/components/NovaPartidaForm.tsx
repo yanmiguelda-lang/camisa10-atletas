@@ -33,6 +33,9 @@ export function NovaPartidaForm({
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    // Captura a referência do form já aqui — depois de um `await`, o navegador
+    // zera `e.currentTarget` porque o evento original já terminou de despachar.
+    const formEl = e.currentTarget;
     setErro(null);
     setCarregando(true);
 
@@ -49,7 +52,7 @@ export function NovaPartidaForm({
       }
     }
 
-    const form = new FormData(e.currentTarget);
+    const form = new FormData(formEl);
     const stats: Record<string, number> = {};
     for (const key of statFields) {
       const raw = form.get(key);
