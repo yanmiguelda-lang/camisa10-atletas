@@ -405,8 +405,8 @@ body {
         .lp-pricing { background: #F0F0F0; padding: 60px 20px; }
         .lp-pricing-inner { max-width: 1280px; margin: 0 auto; }
         .lp-pricing h2 { font-family: "Outfit", "Inter", system-ui, sans-serif; font-size: clamp(36px, 10vw, 72px); font-weight: 900; text-transform: uppercase; color: #0A0A0A; line-height: 0.95; letter-spacing: -2px; margin-bottom: 10px; }
-        .lp-pricing > div > p { color: #666; margin-bottom: 36px; font-size: 14px; }
-        .lp-pricing-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        .lp-pricing-inner > p { color: #666; margin-bottom: 36px; font-size: 14px; }
+        .lp-pricing-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 24px; }
 
         .lp-cta { background: #1E3A8A; padding: 40px 20px; display: flex; flex-direction: column; gap: 20px; }
         .lp-cta p { font-family: "Outfit", "Inter", system-ui, sans-serif; font-size: 18px; font-weight: 800; color: #fff; line-height: 1.4; margin: 0; }

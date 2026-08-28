@@ -23,6 +23,7 @@ export default function CadastroPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [pass, setPass] = useState("");
+  const [aceitouTermos, setAceitouTermos] = useState(false);
 
   // Atleta
   const [athleteName, setAthleteName] = useState("");
@@ -41,6 +42,10 @@ export default function CadastroPage() {
     e.preventDefault();
     if (!name.trim() || !email.trim() || pass.length < 6) {
       setError("Preencha todos os campos. Senha mínimo 6 caracteres.");
+      return;
+    }
+    if (!aceitouTermos) {
+      setError("Você precisa aceitar os Termos de Uso e a Política de Privacidade para continuar.");
       return;
     }
     setError("");
@@ -74,7 +79,7 @@ export default function CadastroPage() {
     const registerRes = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password: pass, phone }),
+      body: JSON.stringify({ name, email, password: pass, phone, termsAccepted: aceitouTermos }),
     });
     if (!registerRes.ok) {
       const data = await registerRes.json();
@@ -217,6 +222,21 @@ export default function CadastroPage() {
                 <label className="label-light">Senha</label>
                 <input className="input-light" type="password" placeholder="Mínimo 6 caracteres" value={pass} onChange={(e) => setPass(e.target.value)} required />
               </div>
+              <label style={{ display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12.5, color: "#555", cursor: "pointer", lineHeight: 1.5 }}>
+                <input
+                  type="checkbox"
+                  checked={aceitouTermos}
+                  onChange={(e) => setAceitouTermos(e.target.checked)}
+                  style={{ marginTop: 2, width: 15, height: 15, flexShrink: 0, cursor: "pointer" }}
+                />
+                <span>
+                  Li e aceito os{" "}
+                  <Link href="/termos" target="_blank" style={{ color: "#F97316", fontWeight: 600, textDecoration: "underline" }}>
+                    Termos de Uso e a Política de Privacidade
+                  </Link>{" "}
+                  do Camisa 10 F.C.
+                </span>
+              </label>
               {error && <p style={{ color: "#dc2626", fontSize: 13 }}>{error}</p>}
               <button type="submit" className="btn-c10 btn-c10-primary" style={{ width: "100%", padding: "14px 26px", fontSize: 15 }}>
                 Continuar →

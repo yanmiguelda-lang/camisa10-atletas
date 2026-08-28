@@ -4,11 +4,12 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   const body = await req.json();
-  const { name, email, password, phone } = body as {
+  const { name, email, password, phone, termsAccepted } = body as {
     name?: string;
     email?: string;
     password?: string;
     phone?: string;
+    termsAccepted?: boolean;
   };
 
   if (!name || !email || !password) {
@@ -16,6 +17,9 @@ export async function POST(req: Request) {
   }
   if (password.length < 6) {
     return NextResponse.json({ error: "A senha precisa ter pelo menos 6 caracteres." }, { status: 400 });
+  }
+  if (!termsAccepted) {
+    return NextResponse.json({ error: "É necessário aceitar os Termos de Uso e a Política de Privacidade." }, { status: 400 });
   }
 
   const emailNormalizado = email.toLowerCase().trim();
@@ -26,7 +30,7 @@ export async function POST(req: Request) {
 
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({
-    data: { name, email: emailNormalizado, passwordHash, phone },
+    data: { name, email: emailNormalizado, passwordHash, phone, termsAcceptedAt: new Date() },
   });
 
   return NextResponse.json({ id: user.id, email: user.email });

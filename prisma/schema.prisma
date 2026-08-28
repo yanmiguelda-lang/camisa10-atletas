@@ -8,14 +8,30 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  name          String
-  email         String         @unique
-  passwordHash  String
-  phone         String?
-  createdAt     DateTime       @default(now())
-  athletes      Athlete[]
-  subscriptions Subscription[]
+  id                String               @id @default(cuid())
+  name              String
+  email             String               @unique
+  passwordHash      String
+  phone             String?
+  createdAt         DateTime             @default(now())
+  termsAcceptedAt   DateTime?
+  athletes          Athlete[]
+  subscriptions     Subscription[]
+  passwordResets    PasswordResetRequest[]
+}
+
+enum ResetStatus {
+  PENDING
+  RESOLVED
+}
+
+model PasswordResetRequest {
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status      ResetStatus @default(PENDING)
+  requestedAt DateTime    @default(now())
+  resolvedAt  DateTime?
 }
 
 enum Polo {

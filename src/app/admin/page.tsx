@@ -6,6 +6,7 @@ import { PLANOS } from "@/lib/pix";
 import { isAdminEmail } from "@/lib/admin";
 import { DashboardNav } from "@/components/DashboardNav";
 import { ConfirmarPagamentoButton } from "@/components/ConfirmarPagamentoButton";
+import { RedefinirSenhaForm } from "@/components/RedefinirSenhaForm";
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions);
@@ -19,6 +20,12 @@ export default async function AdminPage() {
     where: { status: "PENDING" },
     orderBy: { requestedAt: "asc" },
     include: { user: true, athlete: true },
+  });
+
+  const pedidosSenha = await prisma.passwordResetRequest.findMany({
+    where: { status: "PENDING" },
+    orderBy: { requestedAt: "asc" },
+    include: { user: true },
   });
 
   return (
@@ -59,6 +66,39 @@ export default async function AdminPage() {
             {pendentes.length === 0 && (
               <div style={{ borderRadius: 20, padding: "48px 24px", textAlign: "center", background: "rgba(12,27,54,0.6)", border: "1.5px solid rgba(255,255,255,0.08)" }}>
                 <p style={{ color: "#94a3b8", fontSize: 14 }}>Nenhum pagamento pendente no momento.</p>
+              </div>
+            )}
+          </div>
+
+          <h1 className="text-gradient" style={{ fontSize: 22, fontWeight: 800, marginTop: 44, marginBottom: 4 }}>
+            🔑 Solicitações de senha
+          </h1>
+          <p style={{ color: "#94a3b8", fontSize: 14, marginBottom: 28 }}>
+            Defina uma senha temporária e avise o responsável por WhatsApp ou telefone.
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {pedidosSenha.map((p) => (
+              <div
+                key={p.id}
+                className="card"
+                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "18px 22px", flexWrap: "wrap" }}
+              >
+                <div>
+                  <p style={{ fontWeight: 700, color: "#fff", fontSize: 15 }}>{p.user.name}</p>
+                  <p style={{ fontSize: 13, color: "#94a3b8", marginTop: 2 }}>
+                    {p.user.email}
+                    {p.user.phone ? ` · ${p.user.phone}` : ""}
+                  </p>
+                  <p style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>Pedido em {new Date(p.requestedAt).toLocaleString("pt-BR")}</p>
+                </div>
+                <RedefinirSenhaForm requestId={p.id} />
+              </div>
+            ))}
+
+            {pedidosSenha.length === 0 && (
+              <div style={{ borderRadius: 20, padding: "48px 24px", textAlign: "center", background: "rgba(12,27,54,0.6)", border: "1.5px solid rgba(255,255,255,0.08)" }}>
+                <p style={{ color: "#94a3b8", fontSize: 14 }}>Nenhuma solicitação de senha no momento.</p>
               </div>
             )}
           </div>

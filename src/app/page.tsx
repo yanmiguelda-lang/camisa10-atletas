@@ -293,9 +293,7 @@ export default function LandingPage() {
             <br />
             DO SEU ATLETA
           </h2>
-          <div>
-            <p>Menos de R$1,25 por dia. O perfil do seu filho vale mais do que um lanche.</p>
-          </div>
+          <p>O perfil do seu filho custa 1 bala por dia, e vale mais do que você pode imaginar.</p>
           <div className="lp-pricing-grid">
             {/* TORCIDA */}
             <div style={{ background: "#fff", border: "1.5px solid rgba(0,0,0,0.08)", borderRadius: 16, padding: "32px 24px" }}>

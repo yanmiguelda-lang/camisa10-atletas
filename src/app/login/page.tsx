@@ -65,6 +65,9 @@ export default function LoginPage() {
           <div>
             <label className="label-light" htmlFor="password">Senha</label>
             <input className="input-light" id="password" name="password" type="password" placeholder="••••••••" required />
+            <Link href="/esqueci-senha" style={{ display: "inline-block", marginTop: 8, fontSize: 12.5, color: "#666", textDecoration: "none" }}>
+              Esqueci minha senha
+            </Link>
           </div>
 
           {erro && (

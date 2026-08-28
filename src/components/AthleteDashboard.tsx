@@ -107,8 +107,8 @@ export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
               <span style={{ fontSize: 36, fontWeight: 900 }}>⚽</span>
             )}
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="text-gradient" style={{ fontWeight: 900, fontSize: 26, letterSpacing: -0.5 }}>
+          <div style={{ flex: "1 1 220px", minWidth: 220 }}>
+            <div className="text-gradient" style={{ fontWeight: 900, fontSize: 26, letterSpacing: -0.5, textWrap: "balance" }}>
               {athlete.name}
             </div>
             <div style={{ marginTop: 8, display: "flex", gap: 10, flexWrap: "wrap" }}>
