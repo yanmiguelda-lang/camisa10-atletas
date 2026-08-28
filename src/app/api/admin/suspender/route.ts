@@ -24,10 +24,10 @@ export async function POST(req: Request) {
 
   const existente = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
   if (!existente) {
-    return NextResponse.json({ error: "Pagamento não encontrado — pode já ter sido resolvido." }, { status: 404 });
+    return NextResponse.json({ error: "Assinatura não encontrada — pode já ter sido resolvida." }, { status: 404 });
   }
-  if (existente.status !== "PENDING") {
-    return NextResponse.json(existente); // já resolvido — idempotente, não é erro
+  if (existente.status === "EXPIRED") {
+    return NextResponse.json(existente); // já suspensa — idempotente, não é erro
   }
 
   try {

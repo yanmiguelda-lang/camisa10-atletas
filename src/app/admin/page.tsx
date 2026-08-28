@@ -7,6 +7,7 @@ import { isAdminEmail } from "@/lib/admin";
 import { DashboardNav } from "@/components/DashboardNav";
 import { ConfirmarPagamentoButton } from "@/components/ConfirmarPagamentoButton";
 import { RedefinirSenhaForm } from "@/components/RedefinirSenhaForm";
+import { RevogarAcessoButton } from "@/components/RevogarAcessoButton";
 
 export default async function AdminPage() {
   const session = await getServerSession(authOptions);
@@ -26,6 +27,12 @@ export default async function AdminPage() {
     where: { status: "PENDING" },
     orderBy: { requestedAt: "asc" },
     include: { user: true },
+  });
+
+  const ativas = await prisma.subscription.findMany({
+    where: { status: "ACTIVE" },
+    orderBy: { athlete: { name: "asc" } },
+    include: { user: true, athlete: true },
   });
 
   return (
@@ -99,6 +106,44 @@ export default async function AdminPage() {
             {pedidosSenha.length === 0 && (
               <div style={{ borderRadius: 20, padding: "48px 24px", textAlign: "center", background: "rgba(12,27,54,0.6)", border: "1.5px solid rgba(255,255,255,0.08)" }}>
                 <p style={{ color: "#94a3b8", fontSize: 14 }}>Nenhuma solicitação de senha no momento.</p>
+              </div>
+            )}
+          </div>
+
+          <h1 className="text-gradient" style={{ fontSize: 22, fontWeight: 800, marginTop: 44, marginBottom: 4 }}>
+            ✅ Assinaturas ativas
+          </h1>
+          <p style={{ color: "#94a3b8", fontSize: 14, marginBottom: 28 }}>
+            {ativas.length} {ativas.length === 1 ? "conta ativa" : "contas ativas"}, em ordem alfabética. Remova o
+            acesso de quem cancelou ou parou de pagar.
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {ativas.map((s) => (
+              <div
+                key={s.id}
+                className="card"
+                style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "18px 22px", flexWrap: "wrap" }}
+              >
+                <div>
+                  <p style={{ fontWeight: 700, color: "#fff", fontSize: 15 }}>
+                    {s.athlete.name} — Plano {PLANOS[s.plan].label} (R$ {PLANOS[s.plan].preco})
+                  </p>
+                  <p style={{ fontSize: 13, color: "#94a3b8", marginTop: 2 }}>
+                    Responsável: {s.user.name} ({s.user.email}
+                    {s.user.phone ? ` · ${s.user.phone}` : ""})
+                  </p>
+                  <p style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>
+                    Ativo desde {s.confirmedAt ? new Date(s.confirmedAt).toLocaleDateString("pt-BR") : "—"}
+                  </p>
+                </div>
+                <RevogarAcessoButton subscriptionId={s.id} />
+              </div>
+            ))}
+
+            {ativas.length === 0 && (
+              <div style={{ borderRadius: 20, padding: "48px 24px", textAlign: "center", background: "rgba(12,27,54,0.6)", border: "1.5px solid rgba(255,255,255,0.08)" }}>
+                <p style={{ color: "#94a3b8", fontSize: 14 }}>Nenhuma assinatura ativa no momento.</p>
               </div>
             )}
           </div>
