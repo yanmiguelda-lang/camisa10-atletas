@@ -510,5 +510,29 @@ body {
   .est-app { max-width: none !important; padding: 24px 20px 40px !important; }
   .est-kpis { grid-template-columns: repeat(4, 1fr) !important; }
   .est-main-grid { grid-template-columns: 1.7fr 1fr !important; }
+
+  /* Sugere paisagem — a tabela tem muitas colunas e fica bem mais confortável
+     deitada. O usuário ainda pode trocar pra retrato na caixa de impressão. */
+  @page { size: landscape; margin: 12mm; }
+
+  /* Na tela a tabela rola de lado (overflow-x: auto). Impresso não existe
+     rolagem — tudo que passava da largura visível simplesmente desaparecia,
+     em vez de virar mais página. Aqui a tabela larga o scroll, encolhe fonte
+     e padding, e deixa o cabeçalho quebrar linha em vez de cortar colunas. */
+  .est-table-scroll { overflow: visible !important; }
+  .est-table-scroll table { min-width: 0 !important; width: 100% !important; table-layout: fixed; }
+  .est-table-scroll thead th, .est-table-scroll tbody td {
+    white-space: normal !important;
+    word-break: break-word;
+    font-size: 9px !important;
+    padding: 4px 4px !important;
+    line-height: 1.2;
+  }
+  /* Data, Adversário, Min. e Observações têm largura própria — o resto das
+     colunas (as estatísticas numéricas) divide igualmente o espaço restante. */
+  .est-table-scroll th:first-child, .est-table-scroll td:first-child { width: 8%; }
+  .est-table-scroll th:nth-child(2), .est-table-scroll td:nth-child(2) { width: 13%; }
+  .est-table-scroll th:nth-child(3), .est-table-scroll td:nth-child(3) { width: 6%; }
+  .est-table-scroll th:last-child, .est-table-scroll td:last-child { width: 13%; }
 }
       
