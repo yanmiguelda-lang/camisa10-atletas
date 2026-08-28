@@ -6,7 +6,7 @@ import Link from "next/link";
 import Button from "@/components/Button";
 import { calcularCategoria, traduzirPolo, traduzirPosicao } from "@/lib/category";
 import { NovaPartidaForm } from "@/components/NovaPartidaForm";
-import { POSITION_HIGHLIGHT_STATS, STAT_LABELS, type StatKey } from "@/lib/positionStats";
+import { POSITION_HIGHLIGHT_STATS, POSITION_STATS, STAT_LABELS, type StatKey } from "@/lib/positionStats";
 
 type MatchPhoto = { id: string; url: string };
 type Match = {
@@ -139,6 +139,9 @@ export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 10, flexShrink: 0 }}>
             <Button href={profileUrl} target="_blank" variant="primary" size="sm">
               Ver perfil →
+            </Button>
+            <Button href={`/dashboard/atleta/${athlete.id}/estatisticas`} variant="secondary" size="sm">
+              📊 Estatísticas
             </Button>
             <Button
               onClick={() => navigator.clipboard.writeText(window.location.origin + profileUrl)}
@@ -290,13 +293,13 @@ export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
                   </div>
                   {m.notes && <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 6, fontStyle: "italic" }}>{m.notes}</div>}
                 </div>
-                <div style={{ display: "flex", gap: 16, flexShrink: 0, flexWrap: "wrap" }}>
-                  {POSITION_HIGHLIGHT_STATS[m.position].map((key, idx) => (
+                <div style={{ display: "flex", gap: 10, flexShrink: 0, flexWrap: "wrap", maxWidth: 420 }}>
+                  {POSITION_STATS[m.position].map((key, idx) => (
                     <StatPill
                       key={key}
                       value={m[key] ?? 0}
                       label={STAT_LABELS[key]}
-                      color={["#F97316", "#60a5fa", "#22c55e"][idx % 3]}
+                      color={["#F97316", "#60a5fa", "#22c55e", "#a78bfa", "#fb923c", "#38bdf8", "#4ade80"][idx % 7]}
                     />
                   ))}
                 </div>
