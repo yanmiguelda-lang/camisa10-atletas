@@ -1,0 +1,18 @@
+-- AlterTable
+ALTER TABLE "Match" ADD COLUMN     "ballsLost" INTEGER,
+ADD COLUMN     "chancesCreated" INTEGER,
+ADD COLUMN     "dribblesCompleted" INTEGER,
+ADD COLUMN     "duelsWon" INTEGER,
+ADD COLUMN     "effectivePressures" INTEGER,
+ADD COLUMN     "foulsSuffered" INTEGER,
+ADD COLUMN     "goalsConceded" INTEGER,
+ADD COLUMN     "hardSaves" INTEGER,
+ADD COLUMN     "interceptions" INTEGER,
+ADD COLUMN     "minutes" INTEGER,
+ADD COLUMN     "passesCompleted" INTEGER,
+ADD COLUMN     "progressivePasses" INTEGER,
+ADD COLUMN     "recoveries" INTEGER,
+ADD COLUMN     "saves" INTEGER,
+ADD COLUMN     "savesOneOnOne" INTEGER,
+ADD COLUMN     "shots" INTEGER,
+ADD COLUMN     "tackles" INTEGER;

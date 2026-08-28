@@ -6,6 +6,7 @@ import Link from "next/link";
 import Button from "@/components/Button";
 import { calcularCategoria, traduzirPolo, traduzirPosicao } from "@/lib/category";
 import { NovaPartidaForm } from "@/components/NovaPartidaForm";
+import { POSITION_HIGHLIGHT_STATS, STAT_LABELS, type StatKey } from "@/lib/positionStats";
 
 type MatchPhoto = { id: string; url: string };
 type Match = {
@@ -15,10 +16,11 @@ type Match = {
   goals: number;
   assists: number;
   defensivePlays: number;
-  position: string;
+  position: "GOLEIRO" | "FIXO" | "ALA" | "PIVO";
+  minutes: number | null;
   notes: string | null;
   photos: MatchPhoto[];
-};
+} & Partial<Record<StatKey, number | null>>;
 type Athlete = {
   id: string;
   name: string;
@@ -38,24 +40,20 @@ export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
   const [lightbox, setLightbox] = useState<string | null>(null);
 
   const planoAtivo = athlete.subscriptions[0]?.plan;
-  const totalGols = athlete.matches.reduce((s, m) => s + m.goals, 0);
-  const totalAssist = athlete.matches.reduce((s, m) => s + m.assists, 0);
-  const totalDefesas = athlete.matches.reduce((s, m) => s + m.defensivePlays, 0);
-  const isGK = athlete.position === "GOLEIRO";
+  const posicaoPrincipal = (athlete.position ?? "ALA") as keyof typeof POSITION_HIGHLIGHT_STATS;
+  const destaques = POSITION_HIGHLIGHT_STATS[posicaoPrincipal];
+
+  function somaEstat(key: StatKey) {
+    return athlete.matches.reduce((s, m) => s + (m[key] ?? 0), 0);
+  }
 
   const gamesWithPhoto = athlete.matches.filter((m) => m.photos.length > 0);
   const profileUrl = `/atleta/${athlete.publicSlug}`;
 
-  const statCards = isGK
-    ? [
-        { label: "Jogos", value: athlete.matches.length, accent: false },
-        { label: "Defesas", value: totalDefesas, accent: true },
-      ]
-    : [
-        { label: "Jogos", value: athlete.matches.length, accent: false },
-        { label: "Gols", value: totalGols, accent: true },
-        { label: "Assistências", value: totalAssist, accent: true },
-      ];
+  const statCards = [
+    { label: "Jogos", value: athlete.matches.length, accent: false },
+    ...destaques.map((key, i) => ({ label: STAT_LABELS[key], value: somaEstat(key), accent: i === 0 })),
+  ];
 
   return (
     <div style={{ maxWidth: 740, margin: "0 auto", padding: "36px 20px 60px" }}>
@@ -288,13 +286,19 @@ export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
                   </div>
                   <div style={{ fontSize: 13, color: "#cbd5e1", marginTop: 4, fontWeight: 600 }}>
                     {new Date(m.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })} · {traduzirPosicao(m.position)}
+                    {m.minutes ? ` · ${m.minutes}min` : ""}
                   </div>
                   {m.notes && <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 6, fontStyle: "italic" }}>{m.notes}</div>}
                 </div>
-                <div style={{ display: "flex", gap: 16, flexShrink: 0 }}>
-                  <StatPill value={m.goals} label="gols" color="#F97316" />
-                  <StatPill value={m.assists} label="assist." color="#60a5fa" />
-                  <StatPill value={m.defensivePlays} label="defesas" color="#22c55e" />
+                <div style={{ display: "flex", gap: 16, flexShrink: 0, flexWrap: "wrap" }}>
+                  {POSITION_HIGHLIGHT_STATS[m.position].map((key, idx) => (
+                    <StatPill
+                      key={key}
+                      value={m[key] ?? 0}
+                      label={STAT_LABELS[key]}
+                      color={["#F97316", "#60a5fa", "#22c55e"][idx % 3]}
+                    />
+                  ))}
                 </div>
               </div>
             </div>

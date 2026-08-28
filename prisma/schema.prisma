@@ -60,6 +60,33 @@ model Match {
   notes          String?
   createdAt      DateTime     @default(now())
   photos         MatchPhoto[]
+
+  // ── Estatísticas detalhadas por posição (todas opcionais) ──
+  minutes Int? // todas as posições
+
+  // Goleiro
+  saves           Int? // defesas
+  goalsConceded   Int? // gols sofridos
+  savesOneOnOne   Int? // defesas em 1x1
+  hardSaves       Int? // defesas difíceis
+  passesCompleted Int? // passes certos (goleiro)
+
+  // Fixo
+  tackles             Int? // desarmes
+  interceptions       Int? // interceptações
+  progressivePasses   Int? // passes progressivos
+  effectivePressures  Int? // pressões eficientes
+
+  // Ala / Pivô
+  shots              Int? // finalizações
+  dribblesCompleted  Int? // dribles certos (ala)
+  chancesCreated     Int? // chances criadas
+  foulsSuffered      Int? // faltas sofridas (pivô)
+
+  // Compartilhados entre posições
+  recoveries Int? // recuperações (fixo, ala)
+  duelsWon   Int? // duelos ganhos (fixo, ala, pivô)
+  ballsLost  Int? // perdas de bola (goleiro, fixo, pivô)
 }
 
 model MatchPhoto {

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Button from "@/components/Button";
+import { POSITION_STATS, STAT_LABELS, type StatKey } from "@/lib/positionStats";
 
 const POSICOES: Record<string, string> = { GOLEIRO: "Goleiro", FIXO: "Fixo", ALA: "Ala", PIVO: "Pivô" };
 
@@ -20,6 +21,9 @@ export function NovaPartidaForm({
   const [carregando, setCarregando] = useState(false);
   const [fotos, setFotos] = useState<FileList | null>(null);
   const [fotosPreview, setFotosPreview] = useState<string[]>([]);
+  const [position, setPosition] = useState((defaultPosition as keyof typeof POSITION_STATS) ?? "ALA");
+
+  const statFields = POSITION_STATS[position];
 
   function handleFotosChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
@@ -46,18 +50,23 @@ export function NovaPartidaForm({
     }
 
     const form = new FormData(e.currentTarget);
+    const stats: Record<string, number> = {};
+    for (const key of statFields) {
+      const raw = form.get(key);
+      if (raw !== null && raw !== "") stats[key] = Number(raw);
+    }
+
     const res = await fetch(`/api/atletas/${athleteId}/partidas`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         date: form.get("date"),
         opponent: form.get("opponent"),
-        goals: Number(form.get("goals") ?? 0),
-        assists: Number(form.get("assists") ?? 0),
-        defensivePlays: Number(form.get("defensivePlays") ?? 0),
-        position: form.get("position"),
+        position,
+        minutes: form.get("minutes") ? Number(form.get("minutes")) : undefined,
         notes: form.get("notes"),
         photoUrls,
+        ...stats,
       }),
     });
 
@@ -86,26 +95,32 @@ export function NovaPartidaForm({
 
       <div>
         <label className="label" htmlFor="position">Posição na partida</label>
-        <select className="input" id="position" name="position" defaultValue={defaultPosition ?? "ALA"} required>
+        <select
+          className="input"
+          id="position"
+          name="position"
+          value={position}
+          onChange={(e) => setPosition(e.target.value as keyof typeof POSITION_STATS)}
+          required
+        >
           {Object.entries(POSICOES).map(([key, label]) => (
             <option key={key} value={key}>{label}</option>
           ))}
         </select>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
-        <div>
-          <label className="label" htmlFor="goals">Gols</label>
-          <input className="input" id="goals" name="goals" type="number" min={0} defaultValue={0} />
-        </div>
-        <div>
-          <label className="label" htmlFor="assists">Assist.</label>
-          <input className="input" id="assists" name="assists" type="number" min={0} defaultValue={0} />
-        </div>
-        <div>
-          <label className="label" htmlFor="defensivePlays">Defesas</label>
-          <input className="input" id="defensivePlays" name="defensivePlays" type="number" min={0} defaultValue={0} />
-        </div>
+      <div>
+        <label className="label" htmlFor="minutes">Minutagem (opcional)</label>
+        <input className="input" id="minutes" name="minutes" type="number" min={0} max={60} placeholder="Ex: 32" />
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+        {statFields.map((key) => (
+          <div key={key}>
+            <label className="label" htmlFor={key}>{STAT_LABELS[key as StatKey]}</label>
+            <input className="input" id={key} name={key} type="number" min={0} defaultValue={0} />
+          </div>
+        ))}
       </div>
 
       <div>

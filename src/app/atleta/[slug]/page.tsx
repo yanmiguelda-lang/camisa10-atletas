@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { calcularCategoria, calcularTemporada, traduzirPolo, traduzirPosicao } from "@/lib/category";
+import { POSITION_HIGHLIGHT_STATS, STAT_LABELS, type StatKey } from "@/lib/positionStats";
 
 export default async function PerfilPublicoPage({ params }: { params: { slug: string } }) {
   const atleta = await prisma.athlete.findUnique({
@@ -15,11 +16,13 @@ export default async function PerfilPublicoPage({ params }: { params: { slug: st
 
   const planoAtivo = atleta.subscriptions[0]?.plan;
   const temFotos = planoAtivo === "CRAQUE";
-  const isGK = atleta.position === "GOLEIRO";
+  const posicaoPrincipal = (atleta.position ?? "ALA") as keyof typeof POSITION_HIGHLIGHT_STATS;
+  const destaques = POSITION_HIGHLIGHT_STATS[posicaoPrincipal];
 
-  const totalGols = atleta.matches.reduce((s, m) => s + m.goals, 0);
-  const totalAssist = atleta.matches.reduce((s, m) => s + m.assists, 0);
-  const totalDefesas = atleta.matches.reduce((s, m) => s + m.defensivePlays, 0);
+  const matches = atleta.matches;
+  function somaEstat(key: StatKey) {
+    return matches.reduce((s, m) => s + ((m as unknown as Record<string, number | null>)[key] ?? 0), 0);
+  }
 
   const albunsPorTemporada = new Map<string, string[]>();
   if (temFotos) {
@@ -31,13 +34,10 @@ export default async function PerfilPublicoPage({ params }: { params: { slug: st
     }
   }
 
-  const statCards = isGK
-    ? [{ label: "Jogos", value: atleta.matches.length, color: "#60a5fa" }, { label: "Defesas", value: totalDefesas, color: "#F97316" }]
-    : [
-        { label: "Jogos", value: atleta.matches.length, color: "#60a5fa" },
-        { label: "Gols", value: totalGols, color: "#F97316" },
-        { label: "Assistências", value: totalAssist, color: "#22c55e" },
-      ];
+  const statCards = [
+    { label: "Jogos", value: atleta.matches.length, color: "#60a5fa" },
+    ...destaques.map((key, i) => ({ label: STAT_LABELS[key], value: somaEstat(key), color: ["#F97316", "#22c55e", "#60a5fa"][i % 3] })),
+  ];
 
   return (
     <main style={{ minHeight: "100vh", background: "#060E20", position: "relative", overflow: "hidden" }}>
@@ -157,7 +157,9 @@ export default async function PerfilPublicoPage({ params }: { params: { slug: st
                 <span style={{ fontSize: 12, color: "#94a3b8" }}>{traduzirPosicao(m.position)}</span>
               </div>
               <p style={{ marginTop: 4, fontSize: 13, color: "#94a3b8" }}>
-                ⚽ {m.goals} gols · 🎯 {m.assists} assistências · 🛡️ {m.defensivePlays} jogadas defensivas
+                {POSITION_HIGHLIGHT_STATS[m.position]
+                  .map((key) => `${(m as unknown as Record<string, number | null>)[key] ?? 0} ${STAT_LABELS[key].toLowerCase()}`)
+                  .join(" · ")}
               </p>
             </div>
           ))}
