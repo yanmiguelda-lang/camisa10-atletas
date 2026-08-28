@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import type { StatKey } from "@/lib/positionStats";
+import { estaAguardandoAtivacao } from "@/lib/subscriptionGate";
 
 const STAT_KEYS: StatKey[] = [
   "goals",
@@ -38,6 +39,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const atleta = await prisma.athlete.findFirst({ where: { id: params.id, userId } });
   if (!atleta) {
     return NextResponse.json({ error: "Atleta não encontrado." }, { status: 404 });
+  }
+  if (await estaAguardandoAtivacao(atleta.id)) {
+    return NextResponse.json({ error: "Esse perfil ainda está aguardando ativação do pagamento." }, { status: 403 });
   }
 
   let body: Record<string, unknown>;

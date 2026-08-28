@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -8,6 +8,7 @@ import { POSITION_STATS, POSITION_HIGHLIGHT_STATS, STAT_LABELS, type StatKey } f
 import { buildLineChart } from "@/lib/chart";
 import { ClickableRow } from "@/components/ClickableRow";
 import { EstatisticasFiltros } from "@/components/EstatisticasFiltros";
+import { estaAguardandoAtivacao } from "@/lib/subscriptionGate";
 
 const CORES = ["#F97316", "#1E3A8A", "#22C55E", "#A855F7", "#0EA5E9", "#EAB308", "#EC4899"];
 
@@ -29,6 +30,7 @@ export default async function EstatisticasPage({
     : null;
 
   if (!atleta) notFound();
+  if (await estaAguardandoAtivacao(atleta.id)) redirect(`/dashboard/atleta/${atleta.id}`);
 
   const posicaoPrincipal = (atleta.position ?? "ALA") as keyof typeof POSITION_STATS;
   const campos = POSITION_STATS[posicaoPrincipal];

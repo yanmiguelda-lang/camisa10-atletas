@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { isAdminEmail } from "@/lib/admin";
 import { DashboardNav } from "@/components/DashboardNav";
 import { AthleteDashboard } from "@/components/AthleteDashboard";
+import { AguardandoAtivacao } from "@/components/AguardandoAtivacao";
+import type { PlanoKey } from "@/lib/pix";
 
 export default async function AtletaPage({ params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
@@ -16,12 +18,15 @@ export default async function AtletaPage({ params }: { params: { id: string } })
         where: { id: params.id, userId },
         include: {
           matches: { orderBy: { date: "desc" }, include: { photos: true } },
-          subscriptions: { where: { status: "ACTIVE" }, take: 1 },
+          subscriptions: { where: { status: { in: ["ACTIVE", "PENDING"] } }, orderBy: { requestedAt: "desc" } },
         },
       })
     : null;
 
   if (!atleta) notFound();
+
+  const ativa = atleta.subscriptions.find((s) => s.status === "ACTIVE");
+  const pendente = atleta.subscriptions.find((s) => s.status === "PENDING");
 
   return (
     <main style={{ minHeight: "100vh", background: "#060E20", position: "relative", overflow: "hidden" }}>
@@ -31,7 +36,16 @@ export default async function AtletaPage({ params }: { params: { id: string } })
       </div>
       <div style={{ position: "relative", zIndex: 1 }}>
         <DashboardNav isAdmin={isAdmin} />
-        <AthleteDashboard athlete={JSON.parse(JSON.stringify(atleta))} />
+        {!ativa && pendente ? (
+          <AguardandoAtivacao
+            athleteName={atleta.name}
+            photoUrl={atleta.photoUrl}
+            plan={pendente.plan as PlanoKey}
+            txid={`C10-${pendente.id.slice(-8).toUpperCase()}`}
+          />
+        ) : (
+          <AthleteDashboard athlete={JSON.parse(JSON.stringify({ ...atleta, subscriptions: ativa ? [ativa] : [] }))} />
+        )}
       </div>
     </main>
   );

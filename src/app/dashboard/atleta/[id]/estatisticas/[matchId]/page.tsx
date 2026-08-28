@@ -1,10 +1,11 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { traduzirPosicao } from "@/lib/category";
 import { POSITION_STATS, STAT_LABELS, type StatKey } from "@/lib/positionStats";
+import { estaAguardandoAtivacao } from "@/lib/subscriptionGate";
 
 export default async function PartidaDetalhePage({ params }: { params: { id: string; matchId: string } }) {
   const session = await getServerSession(authOptions);
@@ -12,6 +13,7 @@ export default async function PartidaDetalhePage({ params }: { params: { id: str
 
   const atleta = userId ? await prisma.athlete.findFirst({ where: { id: params.id, userId } }) : null;
   if (!atleta) notFound();
+  if (await estaAguardandoAtivacao(atleta.id)) redirect(`/dashboard/atleta/${atleta.id}`);
 
   const jogo = await prisma.match.findFirst({
     where: { id: params.matchId, athleteId: atleta.id },

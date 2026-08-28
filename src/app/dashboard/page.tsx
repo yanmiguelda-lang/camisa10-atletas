@@ -16,7 +16,7 @@ export default async function DashboardPage() {
         where: { userId },
         orderBy: { createdAt: "desc" },
         include: {
-          subscriptions: { where: { status: "ACTIVE" }, take: 1 },
+          subscriptions: { where: { status: { in: ["ACTIVE", "PENDING"] } } },
         },
       })
     : [];
@@ -39,7 +39,9 @@ export default async function DashboardPage() {
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
             {atletas.map((atleta) => {
-              const planoAtivo = atleta.subscriptions[0]?.plan;
+              const ativa = atleta.subscriptions.find((s) => s.status === "ACTIVE");
+              const pendente = atleta.subscriptions.find((s) => s.status === "PENDING");
+              const planoAtivo = ativa?.plan;
               return (
                 <Link
                   key={atleta.id}
@@ -94,12 +96,16 @@ export default async function DashboardPage() {
                       fontSize: 11,
                       fontWeight: 700,
                       whiteSpace: "nowrap",
-                      background: planoAtivo ? "rgba(249,115,22,0.15)" : "rgba(255,255,255,0.06)",
-                      color: planoAtivo ? "#fb923c" : "#64748b",
-                      border: planoAtivo ? "1px solid rgba(249,115,22,0.30)" : "1px solid rgba(255,255,255,0.08)",
+                      background: planoAtivo ? "rgba(249,115,22,0.15)" : pendente ? "rgba(234,179,8,0.15)" : "rgba(255,255,255,0.06)",
+                      color: planoAtivo ? "#fb923c" : pendente ? "#eab308" : "#64748b",
+                      border: planoAtivo
+                        ? "1px solid rgba(249,115,22,0.30)"
+                        : pendente
+                          ? "1px solid rgba(234,179,8,0.30)"
+                          : "1px solid rgba(255,255,255,0.08)",
                     }}
                   >
-                    {planoAtivo ? `${planoAtivo === "CRAQUE" ? "Craque" : "Torcida"} ativo` : "Sem plano"}
+                    {planoAtivo ? `${planoAtivo === "CRAQUE" ? "Craque" : "Torcida"} ativo` : pendente ? "⏳ Aguardando ativação" : "Sem plano"}
                   </span>
                 </Link>
               );

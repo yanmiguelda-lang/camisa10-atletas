@@ -400,8 +400,8 @@ export default function CadastroPage() {
         {step === "pix" && pix && (
           <>
             <PixCheckout plan={plan} txid={pix.txid} pixPayload={pix.pixPayload} parentName={name} />
-            <Link href="/login" style={{ display: "block", textAlign: "center", marginTop: 16, fontSize: 13, color: "#666", textDecoration: "none" }}>
-              Já ativou? Fazer login →
+            <Link href="/dashboard" style={{ display: "block", textAlign: "center", marginTop: 16, fontSize: 13, color: "#666", textDecoration: "none" }}>
+              Ir pro meu painel →
             </Link>
           </>
         )}
