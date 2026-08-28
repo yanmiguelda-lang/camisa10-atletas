@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PLANOS } from "@/lib/pix";
+import { isAdminEmail } from "@/lib/admin";
 import { DashboardNav } from "@/components/DashboardNav";
 import { ConfirmarPagamentoButton } from "@/components/ConfirmarPagamentoButton";
 
@@ -10,7 +11,7 @@ export default async function AdminPage() {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
 
-  if (!email || email.toLowerCase() !== process.env.ADMIN_EMAIL?.toLowerCase()) {
+  if (!isAdminEmail(email)) {
     redirect("/dashboard");
   }
 

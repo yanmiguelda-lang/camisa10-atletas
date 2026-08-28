@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { isAdminEmail } from "@/lib/admin";
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   const email = session?.user?.email;
 
-  if (!email || email.toLowerCase() !== process.env.ADMIN_EMAIL?.toLowerCase()) {
+  if (!isAdminEmail(email)) {
     return NextResponse.json({ error: "Não autorizado." }, { status: 403 });
   }
 

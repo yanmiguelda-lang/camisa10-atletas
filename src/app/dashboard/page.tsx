@@ -3,12 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { calcularCategoria, traduzirPolo } from "@/lib/category";
+import { isAdminEmail } from "@/lib/admin";
 import { DashboardNav } from "@/components/DashboardNav";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   const userId = (session?.user as { id?: string } | undefined)?.id;
-  const isAdmin = session?.user?.email?.toLowerCase() === process.env.ADMIN_EMAIL?.toLowerCase();
+  const isAdmin = isAdminEmail(session?.user?.email);
 
   const atletas = userId
     ? await prisma.athlete.findMany({
