@@ -24,10 +24,10 @@ const ELENCO = [
     pai: { name: "Fernanda Nogueira", email: "teste.goleiro@camisa10.com", phone: "(11) 91111-0001" },
     atleta: { name: "Rafael Nogueira", birthDate: "2016-03-12", jerseyNumber: 1, polo: "SANTANA", position: "GOLEIRO" },
     jogos: [
-      { minutes: 40, saves: 8, goalsConceded: 2, savesOneOnOne: 3, hardSaves: 2, passesCompleted: 15, ballsLost: 1, notes: "Pegou pênalti decisivo" },
+      { minutes: 40, saves: 8, goalsConceded: 2, savesOneOnOne: 3, hardSaves: 2, passesCompleted: 15, ballsLost: 1, assists: 1, notes: "Pegou pênalti decisivo" },
       { minutes: 40, saves: 5, goalsConceded: 1, savesOneOnOne: 1, hardSaves: 1, passesCompleted: 18, ballsLost: 0 },
       { minutes: 38, saves: 10, goalsConceded: 3, savesOneOnOne: 4, hardSaves: 3, passesCompleted: 12, ballsLost: 2, notes: "Muito exigido, boa atuação" },
-      { minutes: 40, saves: 6, goalsConceded: 0, savesOneOnOne: 2, hardSaves: 1, passesCompleted: 20, ballsLost: 0, notes: "Jogo sem sofrer gols" },
+      { minutes: 40, saves: 6, goalsConceded: 0, savesOneOnOne: 2, hardSaves: 1, passesCompleted: 20, ballsLost: 0, assists: 1, notes: "Jogo sem sofrer gols" },
       { minutes: 40, saves: 9, goalsConceded: 2, savesOneOnOne: 3, hardSaves: 2, passesCompleted: 16, ballsLost: 1 },
     ],
   },
@@ -35,11 +35,11 @@ const ELENCO = [
     pai: { name: "Carlos Alves", email: "teste.fixo@camisa10.com", phone: "(11) 91111-0002" },
     atleta: { name: "Bernardo Alves", birthDate: "2015-07-22", jerseyNumber: 4, polo: "BARUERI", position: "FIXO" },
     jogos: [
-      { minutes: 35, tackles: 4, interceptions: 3, recoveries: 6, duelsWon: 5, progressivePasses: 8, ballsLost: 2, effectivePressures: 4 },
-      { minutes: 40, tackles: 6, interceptions: 2, recoveries: 5, duelsWon: 7, progressivePasses: 6, ballsLost: 1, effectivePressures: 5, notes: "Liderou a defesa" },
+      { minutes: 35, tackles: 4, interceptions: 3, recoveries: 6, duelsWon: 5, progressivePasses: 8, ballsLost: 2, effectivePressures: 4, assists: 1 },
+      { minutes: 40, tackles: 6, interceptions: 2, recoveries: 5, duelsWon: 7, progressivePasses: 6, ballsLost: 1, effectivePressures: 5, goals: 1, notes: "Liderou a defesa" },
       { minutes: 32, tackles: 3, interceptions: 4, recoveries: 8, duelsWon: 4, progressivePasses: 10, ballsLost: 3, effectivePressures: 3 },
-      { minutes: 40, tackles: 5, interceptions: 5, recoveries: 7, duelsWon: 6, progressivePasses: 9, ballsLost: 1, effectivePressures: 6, notes: "Excelente na saída de bola" },
-      { minutes: 40, tackles: 7, interceptions: 3, recoveries: 9, duelsWon: 8, progressivePasses: 7, ballsLost: 0, effectivePressures: 5 },
+      { minutes: 40, tackles: 5, interceptions: 5, recoveries: 7, duelsWon: 6, progressivePasses: 9, ballsLost: 1, effectivePressures: 6, assists: 1, notes: "Excelente na saída de bola" },
+      { minutes: 40, tackles: 7, interceptions: 3, recoveries: 9, duelsWon: 8, progressivePasses: 7, ballsLost: 0, effectivePressures: 5, goals: 1, assists: 1 },
     ],
   },
   {

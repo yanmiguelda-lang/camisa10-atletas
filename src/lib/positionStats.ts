@@ -47,8 +47,8 @@ export const STAT_LABELS: Record<StatKey, string> = {
 
 /** Ordem de exibição dos campos de estatística por posição (sem minutagem, tratada à parte). */
 export const POSITION_STATS: Record<"GOLEIRO" | "FIXO" | "ALA" | "PIVO", StatKey[]> = {
-  GOLEIRO: ["saves", "goalsConceded", "savesOneOnOne", "hardSaves", "passesCompleted", "ballsLost"],
-  FIXO: ["tackles", "interceptions", "recoveries", "duelsWon", "progressivePasses", "ballsLost", "effectivePressures"],
+  GOLEIRO: ["saves", "goalsConceded", "savesOneOnOne", "hardSaves", "passesCompleted", "ballsLost", "goals", "assists"],
+  FIXO: ["tackles", "interceptions", "recoveries", "duelsWon", "progressivePasses", "ballsLost", "effectivePressures", "goals", "assists"],
   ALA: ["goals", "assists", "shots", "dribblesCompleted", "chancesCreated", "recoveries", "duelsWon"],
   PIVO: ["goals", "shots", "assists", "chancesCreated", "duelsWon", "foulsSuffered", "ballsLost"],
 };
