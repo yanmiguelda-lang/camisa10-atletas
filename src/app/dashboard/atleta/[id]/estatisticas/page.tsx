@@ -52,49 +52,6 @@ export default async function EstatisticasPage({ params }: { params: { id: strin
 
   return (
     <main style={{ minHeight: "100vh", background: "#F5F7FB", color: "#10162B" }}>
-      <style>{`
-        .est-num { font-variant-numeric: tabular-nums; }
-        .est-topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; padding: 24px 32px; border-bottom: 1px solid #E4E8F0; background: #fff; }
-        .est-topbar-left { display: flex; align-items: center; gap: 14px; }
-        .est-avatar { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg,#1E3A8A,#F97316); display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 16px; flex-shrink: 0; overflow: hidden; }
-        .est-h1 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 20px; letter-spacing: -0.01em; }
-        .est-sub { font-size: 13px; color: #8A93A6; margin-top: 1px; }
-        .est-back { font-size: 13px; color: #5B6478; text-decoration: none; }
-
-        .est-app { max-width: 1440px; margin: 0 auto; padding: 24px 32px 64px; }
-
-        .est-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 24px; }
-        .est-kpi { background: #fff; border: 1px solid #E4E8F0; border-radius: 14px; padding: 18px 18px 14px; display: flex; flex-direction: column; gap: 8px; }
-        .est-kpi .lbl { font-size: 11.5px; font-weight: 700; color: #8A93A6; text-transform: uppercase; letter-spacing: 0.06em; }
-        .est-kpi .row { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
-        .est-kpi .val { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 28px; letter-spacing: -0.02em; color: #10162B; }
-        .est-kpi .delta { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
-        .est-kpi .delta.up { color: #16A34A; background: #EAFBF1; }
-        .est-kpi .delta.down { color: #DC2626; background: #FDECEC; }
-        .est-kpi .delta.flat { color: #8A93A6; background: #F0F2F8; }
-        .est-kpi svg { width: 100%; height: 28px; display: block; }
-
-        .est-table-panel { background: #fff; border: 1px solid #E4E8F0; border-radius: 14px; overflow: hidden; }
-        .est-table-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px 14px; }
-        .est-table-head h2 { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 16px; }
-        .est-table-count { font-size: 12.5px; color: #8A93A6; font-weight: 600; }
-        .est-table-scroll { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 760px; }
-        thead th { text-align: right; font-size: 11px; font-weight: 700; color: #8A93A6; text-transform: uppercase; letter-spacing: 0.05em; padding: 10px 16px; border-top: 1px solid #E4E8F0; border-bottom: 1px solid #E4E8F0; background: #F0F2F8; white-space: nowrap; }
-        thead th.left { text-align: left; }
-        tbody td { padding: 12px 16px; font-size: 13.5px; color: #10162B; border-bottom: 1px solid #E4E8F0; white-space: nowrap; text-align: right; }
-        tbody td.left { text-align: left; }
-        tbody tr:last-child td { border-bottom: none; }
-        .est-row:hover { background: #F8F9FC; }
-        .est-row:focus-visible { outline: 2px solid #1E3A8A; outline-offset: -2px; }
-        .est-row .opp-cell::after { content: "→"; margin-left: 8px; color: #C4CADA; font-weight: 400; }
-        .opp-cell { font-weight: 600; }
-        .notes-cell { color: #8A93A6; font-style: italic; max-width: 220px; overflow: hidden; text-overflow: ellipsis; }
-        .stat-strong { font-weight: 700; color: #F97316; }
-
-        .est-empty { background: #fff; border: 1px solid #E4E8F0; border-radius: 14px; padding: 56px 24px; text-align: center; color: #8A93A6; }
-      `}</style>
-
       <div className="est-topbar">
         <div className="est-topbar-left">
           <div className="est-avatar">

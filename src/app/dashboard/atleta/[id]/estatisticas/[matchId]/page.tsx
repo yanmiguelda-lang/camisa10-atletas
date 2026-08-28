@@ -24,25 +24,6 @@ export default async function PartidaDetalhePage({ params }: { params: { id: str
 
   return (
     <main style={{ minHeight: "100vh", background: "#F5F7FB", color: "#10162B" }}>
-      <style>{`
-        .pd-num { font-variant-numeric: tabular-nums; }
-        .pd-topbar { padding: 24px 32px; border-bottom: 1px solid #E4E8F0; background: #fff; }
-        .pd-back { font-size: 13px; color: #5B6478; text-decoration: none; }
-        .pd-app { max-width: 900px; margin: 0 auto; padding: 32px 32px 64px; }
-        .pd-hero { background: #fff; border: 1px solid #E4E8F0; border-radius: 16px; padding: 28px 28px; margin-bottom: 24px; }
-        .pd-vs { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 26px; letter-spacing: -0.02em; margin-bottom: 6px; }
-        .pd-meta { font-size: 14px; color: #5B6478; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-        .pd-pill { font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 6px; background: #EAEFFB; color: #1E3A8A; }
-        .pd-notes { margin-top: 16px; padding: 14px 16px; background: #FFF1E6; border-left: 3px solid #F97316; border-radius: 4px; font-size: 14px; font-style: italic; color: #10162B; }
-        .pd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 24px; }
-        .pd-stat { background: #fff; border: 1px solid #E4E8F0; border-radius: 14px; padding: 22px 18px; text-align: center; }
-        .pd-stat .val { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 40px; color: #F97316; letter-spacing: -0.02em; line-height: 1; }
-        .pd-stat .lbl { font-size: 11.5px; font-weight: 700; color: #8A93A6; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 10px; }
-        .pd-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
-        .pd-photos img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; border: 1px solid #E4E8F0; }
-        .pd-section-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 16px; margin-bottom: 14px; }
-      `}</style>
-
       <div className="pd-topbar">
         <Link href={`/dashboard/atleta/${atleta.id}/estatisticas`} className="pd-back">
           ← Voltar pra planilha
