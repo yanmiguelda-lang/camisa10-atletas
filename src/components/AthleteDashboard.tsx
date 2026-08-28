@@ -251,7 +251,7 @@ export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
                   </div>
                   {m.notes && <div style={{ fontSize: 13, color: "#94a3b8", marginTop: 6, fontStyle: "italic" }}>{m.notes}</div>}
                 </div>
-                <div style={{ display: "flex", gap: 10, flexShrink: 0, flexWrap: "wrap", maxWidth: 420 }}>
+                <div style={{ display: "flex", gap: 10, flexWrap: "wrap", width: "100%" }}>
                   {POSITION_STATS[m.position].map((key, idx) => (
                     <StatPill
                       key={key}

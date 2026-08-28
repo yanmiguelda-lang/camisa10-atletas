@@ -503,5 +503,12 @@ body {
   }
   .est-table-scroll tbody tr { break-inside: avoid; }
   .est-main-grid { break-inside: avoid; }
+
+  /* Impresso a partir do celular, o navegador ainda calcula a largura da
+     página com base na tela — força o layout de desktop (colunas lado a
+     lado) mesmo vindo de uma tela estreita, pra o PDF sair igual ao do PC. */
+  .est-app { max-width: none !important; padding: 24px 20px 40px !important; }
+  .est-kpis { grid-template-columns: repeat(4, 1fr) !important; }
+  .est-main-grid { grid-template-columns: 1.7fr 1fr !important; }
 }
       
