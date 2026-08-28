@@ -42,6 +42,7 @@ export default async function AssinaturaPage({ params }: { params: { athleteId: 
             txid={`C10-${pendente.id.slice(-8).toUpperCase()}`}
             pixPayload={generatePixPayload(`C10-${pendente.id.slice(-8).toUpperCase()}`, PLANOS[pendente.plan as PlanoKey].preco)}
             parentName={atleta.user.name}
+            athleteId={atleta.id}
           />
         ) : (
           <AssinaturaForm athleteId={atleta.id} parentName={atleta.user.name} />

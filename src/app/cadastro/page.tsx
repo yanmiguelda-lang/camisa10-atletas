@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { PLANOS, type PlanoKey } from "@/lib/pix";
 import { PixCheckout } from "@/components/PixCheckout";
 
@@ -14,9 +14,22 @@ const POLOS: Record<string, string> = { SANTANA: "Santana de Parnaíba", BARUERI
 
 export default function CadastroPage() {
   const router = useRouter();
+  const { status } = useSession();
   const [step, setStep] = useState<Step>("conta");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Quem já tem sessão ativa não deve recomeçar um cadastro do zero —
+  // manda direto pro painel, onde dá pra cadastrar outro atleta se for o caso.
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace("/dashboard");
+    }
+  }, [status, router]);
+
+  if (status === "authenticated" || status === "loading") {
+    return null;
+  }
 
   // Conta
   const [name, setName] = useState("");
@@ -36,7 +49,7 @@ export default function CadastroPage() {
 
   // Pagamento
   const [plan, setPlan] = useState<PlanoKey>("TORCIDA");
-  const [pix, setPix] = useState<{ txid: string; pixPayload: string } | null>(null);
+  const [pix, setPix] = useState<{ txid: string; pixPayload: string; athleteId: string } | null>(null);
 
   function handleConta(e: React.FormEvent) {
     e.preventDefault();
@@ -135,7 +148,7 @@ export default function CadastroPage() {
     }
     const sub = await subRes.json();
 
-    setPix({ txid: sub.txid, pixPayload: sub.pixPayload });
+    setPix({ txid: sub.txid, pixPayload: sub.pixPayload, athleteId: athlete.id });
     setLoading(false);
     setStep("pix");
   }
@@ -419,9 +432,9 @@ export default function CadastroPage() {
         {/* PASSO 4 — PIX */}
         {step === "pix" && pix && (
           <>
-            <PixCheckout plan={plan} txid={pix.txid} pixPayload={pix.pixPayload} parentName={name} />
+            <PixCheckout plan={plan} txid={pix.txid} pixPayload={pix.pixPayload} parentName={name} athleteId={pix.athleteId} />
             <Link href="/dashboard" style={{ display: "block", textAlign: "center", marginTop: 16, fontSize: 13, color: "#666", textDecoration: "none" }}>
-              Ir pro meu painel →
+              Ver meu painel agora →
             </Link>
           </>
         )}

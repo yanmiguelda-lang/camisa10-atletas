@@ -37,7 +37,7 @@ export function AssinaturaForm({ athleteId, parentName }: { athleteId: string; p
   }
 
   if (pix) {
-    return <PixCheckout plan={pix.plan} txid={pix.txid} pixPayload={pix.pixPayload} parentName={parentName} />;
+    return <PixCheckout plan={pix.plan} txid={pix.txid} pixPayload={pix.pixPayload} parentName={parentName} athleteId={athleteId} />;
   }
 
   return (

@@ -8,6 +8,7 @@ import { calcularCategoria, calcularTemporada, traduzirPolo, traduzirPosicao } f
 import { NovaPartidaForm } from "@/components/NovaPartidaForm";
 import { POSITION_HIGHLIGHT_STATS, POSITION_STATS, STAT_LABELS, type StatKey } from "@/lib/positionStats";
 import { PhotoGallery, type AlbumTemporada } from "@/components/PhotoGallery";
+import { EditarFotoAtleta } from "@/components/EditarFotoAtleta";
 
 type MatchPhoto = { id: string; url: string };
 type Match = {
@@ -85,28 +86,7 @@ export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
       >
         <div style={{ height: 4, background: "linear-gradient(90deg, transparent, #F97316 20%, #1E3A8A 50%, transparent 80%)" }} />
         <div style={{ padding: "32px 28px 28px", display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
-          <div
-            style={{
-              width: 88,
-              height: 88,
-              borderRadius: "50%",
-              flexShrink: 0,
-              background: athlete.photoUrl ? "transparent" : "linear-gradient(135deg,#1E3A8A,#F97316)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              overflow: "hidden",
-              border: "4px solid rgba(249,115,22,0.40)",
-              boxShadow: "0 0 32px rgba(249,115,22,0.30), inset 0 0 16px rgba(255,255,255,0.10)",
-            }}
-          >
-            {athlete.photoUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={athlete.photoUrl} alt={athlete.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            ) : (
-              <span style={{ fontSize: 36, fontWeight: 900 }}>⚽</span>
-            )}
-          </div>
+          <EditarFotoAtleta athleteId={athlete.id} photoUrl={athlete.photoUrl} name={athlete.name} />
           <div style={{ flex: "1 1 220px", minWidth: 220 }}>
             <div className="text-gradient" style={{ fontWeight: 900, fontSize: 26, letterSpacing: -0.5, textWrap: "balance" }}>
               {athlete.name}

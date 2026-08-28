@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Button from "@/components/Button";
 import { PLANOS, type PlanoKey } from "@/lib/pix";
 
@@ -11,14 +12,46 @@ export function PixCheckout({
   txid,
   pixPayload,
   parentName,
+  athleteId,
 }: {
   plan: PlanoKey;
   txid: string;
   pixPayload: string;
   parentName: string;
+  athleteId?: string;
 }) {
+  const router = useRouter();
   const [qrUrl, setQrUrl] = useState("");
   const [copied, setCopied] = useState(false);
+  const [ativado, setAtivado] = useState(false);
+
+  // Fica de olho se o admin confirmou o pagamento — assim que ativa, manda
+  // o responsável direto pro painel do atleta, sem precisar logar de novo.
+  useEffect(() => {
+    if (!athleteId) return;
+    let cancelado = false;
+    const intervalo = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/atletas/${athleteId}/status`);
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.active && !cancelado) {
+          setAtivado(true);
+          clearInterval(intervalo);
+          setTimeout(() => {
+            router.push(`/dashboard/atleta/${athleteId}`);
+            router.refresh();
+          }, 1600);
+        }
+      } catch {
+        // tenta de novo no próximo tick
+      }
+    }, 6000);
+    return () => {
+      cancelado = true;
+      clearInterval(intervalo);
+    };
+  }, [athleteId, router]);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,6 +80,16 @@ export function PixCheckout({
   const waMsg = encodeURIComponent(
     `Olá! Acabei de assinar o plano ${PLANOS[plan].label} na plataforma Camisa 10 F.C. e realizei o pagamento PIX de R$${PLANOS[plan].preco}.\n\nNome: ${parentName}\nReferência: ${txid}\n\nSegue o comprovante para ativação do acesso. 🧡`
   );
+
+  if (ativado) {
+    return (
+      <div style={{ textAlign: "center", padding: "20px 0" }}>
+        <div style={{ fontSize: 44, marginBottom: 12 }}>✅</div>
+        <h1 style={{ fontSize: 22, fontWeight: 800, marginBottom: 8, color: "#0A0A0A" }}>Pagamento confirmado!</h1>
+        <p style={{ color: "#666", fontSize: 14, lineHeight: 1.6 }}>Seu acesso foi liberado. Te levando pro painel...</p>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -147,7 +190,9 @@ export function PixCheckout({
       </a>
 
       <p style={{ fontSize: 12, color: "#666", textAlign: "center", lineHeight: 1.6 }}>
-        Após confirmar o pagamento, ativamos seu acesso em até 1 dia útil.
+        {athleteId
+          ? "Assim que confirmarmos o pagamento (em até 1 dia útil), esta página te leva direto pro painel — não precisa fazer nada."
+          : "Após confirmar o pagamento, ativamos seu acesso em até 1 dia útil."}
       </p>
     </div>
   );
