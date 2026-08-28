@@ -457,4 +457,51 @@ body {
           .lp-footer-grid { grid-template-columns: 1.4fr 1fr 1fr; gap: 60px; }
           .lp-footer-bottom { flex-direction: row; justify-content: space-between; }
         }
+
+/* ── Galeria de fotos ── */
+.photo-thumb:hover {
+  transform: scale(1.04);
+  border-color: rgba(249, 115, 22, 0.45) !important;
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.20) !important;
+}
+
+/* ── PDF da planilha de estatísticas ── */
+.est-topbar-actions { display: flex; align-items: center; gap: 18px; }
+.est-pdf-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #fff; border: 1px solid #E4E8F0; border-radius: 10px;
+  padding: 9px 16px; font-size: 13.5px; font-weight: 700; color: #1E3A8A;
+  cursor: pointer; font-family: "Inter", sans-serif;
+  box-shadow: 0 1px 2px rgba(16, 22, 43, 0.04);
+}
+.est-pdf-btn:hover { background: #EAEFFB; }
+
+.est-print-header { display: none; }
+
+@media print {
+  .est-topbar-actions .est-pdf-btn,
+  .est-back,
+  .est-filtros,
+  .est-row .opp-cell::after {
+    display: none !important;
+  }
+  .est-print-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 32px 16px;
+  }
+  .est-print-header img { height: 40px; width: auto; }
+  .est-print-header-title { font-family: "Outfit", sans-serif; font-weight: 800; font-size: 17px; color: #10162B; }
+  .est-print-header-sub { font-size: 11.5px; color: #5B6478; margin-top: 2px; }
+
+  body { background: #fff !important; }
+  .est-topbar { border-bottom: 2px solid #10162B; }
+  .est-kpi, .est-chart-panel, .est-highlight-card, .est-table-panel {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+  .est-table-scroll tbody tr { break-inside: avoid; }
+  .est-main-grid { break-inside: avoid; }
+}
       

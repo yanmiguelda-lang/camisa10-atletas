@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Button from "@/components/Button";
-import { calcularCategoria, traduzirPolo, traduzirPosicao } from "@/lib/category";
+import { calcularCategoria, calcularTemporada, traduzirPolo, traduzirPosicao } from "@/lib/category";
 import { NovaPartidaForm } from "@/components/NovaPartidaForm";
 import { POSITION_HIGHLIGHT_STATS, POSITION_STATS, STAT_LABELS, type StatKey } from "@/lib/positionStats";
+import { PhotoGallery, type AlbumTemporada } from "@/components/PhotoGallery";
 
 type MatchPhoto = { id: string; url: string };
 type Match = {
@@ -37,7 +38,6 @@ type Athlete = {
 export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
   const router = useRouter();
   const [showForm, setShowForm] = useState(false);
-  const [lightbox, setLightbox] = useState<string | null>(null);
 
   const planoAtivo = athlete.subscriptions[0]?.plan;
   const posicaoPrincipal = (athlete.position ?? "ALA") as keyof typeof POSITION_HIGHLIGHT_STATS;
@@ -47,8 +47,19 @@ export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
     return athlete.matches.reduce((s, m) => s + (m[key] ?? 0), 0);
   }
 
-  const gamesWithPhoto = athlete.matches.filter((m) => m.photos.length > 0);
   const profileUrl = `/atleta/${athlete.publicSlug}`;
+
+  const albuns: AlbumTemporada[] = (() => {
+    const mapa = new Map<string, AlbumTemporada["fotos"]>();
+    for (const m of athlete.matches) {
+      if (m.photos.length === 0) continue;
+      const temporada = calcularTemporada(new Date(m.date));
+      const dataFmt = new Date(m.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", timeZone: "UTC" });
+      const fotos = m.photos.map((p) => ({ id: p.id, url: p.url, adversario: m.opponent, data: dataFmt }));
+      mapa.set(temporada, [...(mapa.get(temporada) ?? []), ...fotos]);
+    }
+    return [...mapa.entries()].sort((a, b) => b[0].localeCompare(a[0])).map(([temporada, fotos]) => ({ temporada, fotos }));
+  })();
 
   const statCards = [
     { label: "Jogos", value: athlete.matches.length, accent: false },
@@ -57,23 +68,6 @@ export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
 
   return (
     <div style={{ maxWidth: 740, margin: "0 auto", padding: "36px 20px 60px" }}>
-      {/* Lightbox */}
-      {lightbox && (
-        <div
-          onClick={() => setLightbox(null)}
-          style={{ position: "fixed", inset: 0, zIndex: 100, background: "rgba(0,0,0,0.90)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "zoom-out", backdropFilter: "blur(8px)" }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={lightbox} alt="Foto do jogo" style={{ maxWidth: "92vw", maxHeight: "88vh", borderRadius: 16, objectFit: "contain", boxShadow: "0 24px 80px rgba(0,0,0,0.60)" }} />
-          <button
-            onClick={() => setLightbox(null)}
-            style={{ position: "absolute", top: 24, right: 28, background: "rgba(255,255,255,0.10)", border: "none", color: "white", fontSize: 22, width: 44, height: 44, borderRadius: "50%", cursor: "pointer" }}
-          >
-            ✕
-          </button>
-        </div>
-      )}
-
       <Link href="/dashboard" style={{ fontSize: 13, color: "#94a3b8", textDecoration: "none" }}>
         ← Meus atletas
       </Link>
@@ -197,29 +191,13 @@ export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
         ))}
       </div>
 
-      {/* Banco de imagens */}
-      {gamesWithPhoto.length > 0 && (
+      {/* Álbum de fotos */}
+      {albuns.length > 0 && (
         <div style={{ marginBottom: 32 }}>
           <h2 className="text-gradient" style={{ fontSize: 18, fontWeight: 800, marginBottom: 16, letterSpacing: -0.3 }}>
-            📸 Fotos dos jogos
+            📸 Álbum de fotos
           </h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 12 }}>
-            {gamesWithPhoto.flatMap((m) =>
-              m.photos.map((p) => (
-                <div
-                  key={p.id}
-                  onClick={() => setLightbox(p.url)}
-                  style={{ position: "relative", aspectRatio: "1", borderRadius: 16, overflow: "hidden", cursor: "zoom-in", border: "1.5px solid rgba(249,115,22,0.20)", boxShadow: "0 4px 12px rgba(0,0,0,0.20)" }}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={p.url} alt={m.opponent} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, background: "linear-gradient(transparent, rgba(0,0,0,0.80))", padding: "12px 10px 8px", fontSize: 11, color: "rgba(255,255,255,0.90)", fontWeight: 700 }}>
-                    vs {m.opponent}
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+          <PhotoGallery albuns={albuns} />
         </div>
       )}
 
@@ -271,7 +249,7 @@ export function AthleteDashboard({ athlete }: { athlete: Athlete }) {
               }}
             >
               {m.photos[0] && (
-                <div onClick={() => setLightbox(m.photos[0].url)} style={{ cursor: "zoom-in", height: 180, overflow: "hidden", position: "relative" }}>
+                <div style={{ height: 180, overflow: "hidden", position: "relative" }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={m.photos[0].url} alt="Foto do jogo" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   <div style={{ position: "absolute", inset: 0, background: "linear-gradient(transparent 30%, rgba(6,14,32,0.85))" }} />

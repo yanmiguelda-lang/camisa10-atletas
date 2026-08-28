@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { calcularCategoria, calcularTemporada, traduzirPolo, traduzirPosicao } from "@/lib/category";
 import { POSITION_HIGHLIGHT_STATS, STAT_LABELS, type StatKey } from "@/lib/positionStats";
+import { PhotoGallery, type AlbumTemporada } from "@/components/PhotoGallery";
 
 export default async function PerfilPublicoPage({ params }: { params: { slug: string } }) {
   const atleta = await prisma.athlete.findUnique({
@@ -24,15 +25,18 @@ export default async function PerfilPublicoPage({ params }: { params: { slug: st
     return matches.reduce((s, m) => s + ((m as unknown as Record<string, number | null>)[key] ?? 0), 0);
   }
 
-  const albunsPorTemporada = new Map<string, string[]>();
-  if (temFotos) {
-    for (const match of atleta.matches) {
-      const temporada = calcularTemporada(match.date);
-      const urls = match.photos.map((p) => p.url);
-      if (urls.length === 0) continue;
-      albunsPorTemporada.set(temporada, [...(albunsPorTemporada.get(temporada) ?? []), ...urls]);
+  const albuns: AlbumTemporada[] = (() => {
+    if (!temFotos) return [];
+    const mapa = new Map<string, AlbumTemporada["fotos"]>();
+    for (const m of atleta.matches) {
+      if (m.photos.length === 0) continue;
+      const temporada = calcularTemporada(m.date);
+      const dataFmt = new Date(m.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", timeZone: "UTC" });
+      const fotos = m.photos.map((p) => ({ id: p.id, url: p.url, adversario: m.opponent, data: dataFmt }));
+      mapa.set(temporada, [...(mapa.get(temporada) ?? []), ...fotos]);
     }
-  }
+    return [...mapa.entries()].sort((a, b) => b[0].localeCompare(a[0])).map(([temporada, fotos]) => ({ temporada, fotos }));
+  })();
 
   const statCards = [
     { label: "Jogos", value: atleta.matches.length, color: "#60a5fa" },
@@ -125,20 +129,10 @@ export default async function PerfilPublicoPage({ params }: { params: { slug: st
           ))}
         </div>
 
-        {temFotos && albunsPorTemporada.size > 0 && (
+        {temFotos && albuns.length > 0 && (
           <div style={{ marginBottom: 32 }}>
             <h2 className="text-gradient" style={{ fontSize: 16, fontWeight: 800, marginBottom: 14 }}>Álbuns de memória</h2>
-            {[...albunsPorTemporada.entries()].map(([temporada, urls]) => (
-              <div key={temporada} style={{ marginBottom: 16 }}>
-                <p style={{ fontSize: 12, fontWeight: 700, color: "#94a3b8", marginBottom: 8 }}>Temporada {temporada}</p>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                  {urls.map((url) => (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img key={url} src={url} alt="" style={{ height: 96, width: 96, borderRadius: 14, objectFit: "cover", border: "1.5px solid rgba(249,115,22,0.20)" }} />
-                  ))}
-                </div>
-              </div>
-            ))}
+            <PhotoGallery albuns={albuns} />
           </div>
         )}
 

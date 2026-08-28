@@ -9,6 +9,7 @@ import { buildLineChart } from "@/lib/chart";
 import { ClickableRow } from "@/components/ClickableRow";
 import { EstatisticasFiltros } from "@/components/EstatisticasFiltros";
 import { estaAguardandoAtivacao } from "@/lib/subscriptionGate";
+import { BaixarPdfButton } from "@/components/BaixarPdfButton";
 
 const CORES = ["#F97316", "#1E3A8A", "#22C55E", "#A855F7", "#0EA5E9", "#EAB308", "#EC4899"];
 
@@ -115,9 +116,23 @@ export default async function EstatisticasPage({
             </div>
           </div>
         </div>
-        <Link href={`/dashboard/atleta/${atleta.id}`} className="est-back">
-          ← Voltar ao painel
-        </Link>
+        <div className="est-topbar-actions">
+          <BaixarPdfButton />
+          <Link href={`/dashboard/atleta/${atleta.id}`} className="est-back">
+            ← Voltar ao painel
+          </Link>
+        </div>
+      </div>
+
+      <div className="est-print-header">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/logo.png" alt="Perfil Camisa 10" />
+        <div>
+          <div className="est-print-header-title">Relatório de estatísticas — {atleta.name}</div>
+          <div className="est-print-header-sub">
+            Gerado em {new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })} · Camisa 10 F.C.
+          </div>
+        </div>
       </div>
 
       <div className="est-app">
