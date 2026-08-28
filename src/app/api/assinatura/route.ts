@@ -15,7 +15,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Não autenticado." }, { status: 401 });
   }
 
-  const body = await req.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
+  }
   const { athleteId, plan } = body as { athleteId?: string; plan?: string };
 
   if (!athleteId || !plan || !["TORCIDA", "CRAQUE"].includes(plan)) {
@@ -25,6 +30,12 @@ export async function POST(req: Request) {
   const atleta = await prisma.athlete.findFirst({ where: { id: athleteId, userId } });
   if (!atleta) {
     return NextResponse.json({ error: "Atleta não encontrado." }, { status: 404 });
+  }
+
+  // Já tem plano ativo — não deixa abrir outro pedido de PIX por engano.
+  const jaAtivo = await prisma.subscription.findFirst({ where: { athleteId, status: "ACTIVE" } });
+  if (jaAtivo) {
+    return NextResponse.json({ error: `Esse atleta já tem o plano ${PLANOS[jaAtivo.plan as PlanoKey].label} ativo.` }, { status: 409 });
   }
 
   // Evita duplicar um pedido pendente pro mesmo atleta.

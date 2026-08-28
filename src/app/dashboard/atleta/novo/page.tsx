@@ -30,40 +30,48 @@ export default function NovoAtletaPage() {
     setErro(null);
     setCarregando(true);
 
-    let photoUrl: string | undefined;
-    if (foto) {
-      const fd = new FormData();
-      fd.append("file", foto);
-      const upload = await fetch("/api/upload", { method: "POST", body: fd });
-      if (upload.ok) {
-        const data = await upload.json();
-        photoUrl = data.url;
+    try {
+      let photoUrl: string | undefined;
+      if (foto) {
+        const fd = new FormData();
+        fd.append("file", foto);
+        const upload = await fetch("/api/upload", { method: "POST", body: fd });
+        if (upload.ok) {
+          const data = await upload.json();
+          photoUrl = data.url;
+        } else {
+          const data = await upload.json().catch(() => null);
+          setErro(data?.error ?? "Não foi possível subir a foto — cadastrando sem foto.");
+        }
       }
+
+      const form = new FormData(formEl);
+      const res = await fetch("/api/atletas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.get("name"),
+          birthDate: form.get("birthDate"),
+          polo: form.get("polo"),
+          position: position || undefined,
+          jerseyNumber: form.get("jerseyNumber") ? Number(form.get("jerseyNumber")) : undefined,
+          photoUrl,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setErro(data?.error ?? "Não foi possível cadastrar o atleta. Tente de novo.");
+        return;
+      }
+
+      const atleta = await res.json();
+      router.push(`/dashboard/atleta/${atleta.id}`);
+    } catch {
+      setErro("Falha de conexão — confere sua internet e tenta de novo.");
+    } finally {
+      setCarregando(false);
     }
-
-    const form = new FormData(formEl);
-    const res = await fetch("/api/atletas", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: form.get("name"),
-        birthDate: form.get("birthDate"),
-        polo: form.get("polo"),
-        position: position || undefined,
-        jerseyNumber: form.get("jerseyNumber") ? Number(form.get("jerseyNumber")) : undefined,
-        photoUrl,
-      }),
-    });
-
-    setCarregando(false);
-    if (!res.ok) {
-      const data = await res.json();
-      setErro(data.error ?? "Não foi possível cadastrar o atleta.");
-      return;
-    }
-
-    const atleta = await res.json();
-    router.push(`/dashboard/atleta/${atleta.id}`);
   }
 
   return (

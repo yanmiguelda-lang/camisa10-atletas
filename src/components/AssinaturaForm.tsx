@@ -9,20 +9,30 @@ export function AssinaturaForm({ athleteId, parentName }: { athleteId: string; p
   const [carregando, setCarregando] = useState(false);
   const [plano, setPlano] = useState<PlanoKey | null>(null);
   const [pix, setPix] = useState<{ txid: string; pixPayload: string; plan: PlanoKey } | null>(null);
+  const [erro, setErro] = useState<string | null>(null);
 
   async function escolherPlano(key: PlanoKey) {
     if (carregando) return;
     setPlano(key);
+    setErro(null);
     setCarregando(true);
-    const res = await fetch("/api/assinatura", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ athleteId, plan: key }),
-    });
-    setCarregando(false);
-    if (res.ok) {
+    try {
+      const res = await fetch("/api/assinatura", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ athleteId, plan: key }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setErro(data?.error ?? "Não foi possível gerar o PIX. Tente de novo.");
+        return;
+      }
       const data = await res.json();
       setPix({ txid: data.txid, pixPayload: data.pixPayload, plan: data.plan });
+    } catch {
+      setErro("Falha de conexão — confere sua internet e tenta de novo.");
+    } finally {
+      setCarregando(false);
     }
   }
 
@@ -80,6 +90,7 @@ export function AssinaturaForm({ athleteId, parentName }: { athleteId: string; p
           {carregando && plano === key && <div style={{ marginTop: 10, fontSize: 12, color: "#666" }}>Gerando PIX...</div>}
         </button>
       ))}
+      {erro && <p style={{ color: "#dc2626", fontSize: 13, textAlign: "center" }}>{erro}</p>}
       <Link href="/dashboard" style={{ textAlign: "center", fontSize: 13, color: "#666", textDecoration: "none", marginTop: 4 }}>
         ← Voltar
       </Link>

@@ -39,48 +39,56 @@ export function NovaPartidaForm({
     setErro(null);
     setCarregando(true);
 
-    const photoUrls: string[] = [];
-    if (craquePlan && fotos) {
-      for (const file of Array.from(fotos)) {
-        const fd = new FormData();
-        fd.append("file", file);
-        const upload = await fetch("/api/upload", { method: "POST", body: fd });
-        if (upload.ok) {
-          const data = await upload.json();
-          photoUrls.push(data.url);
+    try {
+      const photoUrls: string[] = [];
+      if (craquePlan && fotos) {
+        for (const file of Array.from(fotos)) {
+          const fd = new FormData();
+          fd.append("file", file);
+          const upload = await fetch("/api/upload", { method: "POST", body: fd });
+          if (upload.ok) {
+            const data = await upload.json();
+            photoUrls.push(data.url);
+          } else {
+            const data = await upload.json().catch(() => null);
+            setErro(data?.error ?? "Não foi possível subir uma das fotos — o resto do jogo foi salvo mesmo assim.");
+          }
         }
       }
+
+      const form = new FormData(formEl);
+      const stats: Record<string, number> = {};
+      for (const key of statFields) {
+        const raw = form.get(key);
+        if (raw !== null && raw !== "") stats[key] = Number(raw);
+      }
+
+      const res = await fetch(`/api/atletas/${athleteId}/partidas`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: form.get("date"),
+          opponent: form.get("opponent"),
+          position,
+          minutes: form.get("minutes") ? Number(form.get("minutes")) : undefined,
+          notes: form.get("notes"),
+          photoUrls,
+          ...stats,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        setErro(data?.error ?? "Não foi possível registrar a partida. Tente de novo.");
+        return;
+      }
+
+      onSaved();
+    } catch {
+      setErro("Falha de conexão — confere sua internet e tenta de novo.");
+    } finally {
+      setCarregando(false);
     }
-
-    const form = new FormData(formEl);
-    const stats: Record<string, number> = {};
-    for (const key of statFields) {
-      const raw = form.get(key);
-      if (raw !== null && raw !== "") stats[key] = Number(raw);
-    }
-
-    const res = await fetch(`/api/atletas/${athleteId}/partidas`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        date: form.get("date"),
-        opponent: form.get("opponent"),
-        position,
-        minutes: form.get("minutes") ? Number(form.get("minutes")) : undefined,
-        notes: form.get("notes"),
-        photoUrls,
-        ...stats,
-      }),
-    });
-
-    setCarregando(false);
-    if (!res.ok) {
-      const data = await res.json();
-      setErro(data.error ?? "Não foi possível registrar a partida.");
-      return;
-    }
-
-    onSaved();
   }
 
   return (
