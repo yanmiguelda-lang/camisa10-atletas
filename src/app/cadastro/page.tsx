@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn, useSession } from "next-auth/react";
@@ -19,17 +19,17 @@ export default function CadastroPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Login feito no meio deste cadastro (antes de mostrar o PIX) não pode
+  // disparar o redirecionamento abaixo.
+  const cadastroEmAndamento = useRef(false);
+
   // Quem já tem sessão ativa não deve recomeçar um cadastro do zero —
   // manda direto pro painel, onde dá pra cadastrar outro atleta se for o caso.
   useEffect(() => {
-    if (status === "authenticated") {
+    if (status === "authenticated" && !cadastroEmAndamento.current) {
       router.replace("/dashboard");
     }
   }, [status, router]);
-
-  if (status === "authenticated" || status === "loading") {
-    return null;
-  }
 
   // Conta
   const [name, setName] = useState("");
@@ -84,6 +84,7 @@ export default function CadastroPage() {
 
   async function handlePlano(selectedPlan: PlanoKey) {
     if (loading) return;
+    cadastroEmAndamento.current = true;
     setPlan(selectedPlan);
     setLoading(true);
     setError("");
@@ -156,6 +157,11 @@ export default function CadastroPage() {
   const steps: Step[] = ["conta", "atleta", "plano", "pix"];
   const stepLabel: Record<Step, string> = { conta: "Conta", atleta: "Atleta", plano: "Plano", pix: "Pagamento" };
   const stepIdx = steps.indexOf(step);
+
+  // a saída antecipada fica depois de todos os hooks (antes dela o React quebrava com o erro #310)
+  if (status === "loading" || (status === "authenticated" && !cadastroEmAndamento.current)) {
+    return null;
+  }
 
   return (
     <main

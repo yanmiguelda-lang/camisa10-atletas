@@ -1,0 +1,83 @@
+/* =====================================================================
+   "TRANSMISSÃO AO VIVO" nas telas internas (painel, atleta, login,
+   cadastro, estatísticas, admin). Só visual: troca a forma das peças
+   compartilhadas (bg-orb, card, botões, campos, títulos) por cima do
+   estilo original, sem mexer em nenhuma lógica.
+   ===================================================================== */
+:root {
+  --tvi-fd: "Big Shoulders Display", "Outfit", system-ui, sans-serif;
+  --tvi-laranja: #f97316;
+  --tvi-laranja-q: #ff8a1f;
+  --tvi-azul: #1e3a8a;
+  --tvi-azul-e: #2f6bff;
+  --tvi-corte: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+}
+
+/* fundo: os brilhos redondos viram holofotes de ginásio varrendo */
+.bg-orb { border-radius: 0 !important; filter: blur(5px) !important; width: 60vmax !important; height: 140vmax !important; top: -32% !important; bottom: auto !important; transform-origin: 50% 0 !important;
+  background: conic-gradient(from 180deg at 50% 0%, transparent 168deg, rgba(120, 160, 255, .14) 176deg, rgba(200, 220, 255, .2) 180deg, rgba(120, 160, 255, .14) 184deg, transparent 192deg) !important;
+  animation: tvi-varre 9s ease-in-out infinite alternate !important; }
+.bg-orb-1 { left: -22% !important; right: auto !important; }
+.bg-orb-2 { right: -22% !important; left: auto !important; animation-duration: 11s !important; animation-direction: alternate-reverse !important; }
+.bg-orb-3 { display: none !important; }
+@keyframes tvi-varre { from { transform: rotate(-24deg); } to { transform: rotate(20deg); } }
+/* "10" cromado e piso de quadra atrás de tudo */
+div:has(> .bg-orb-1)::before { content: ""; position: fixed; left: -30%; right: -30%; bottom: -14%; height: 40%; pointer-events: none; opacity: .55;
+  background: linear-gradient(90deg, transparent 49.7%, rgba(255, 255, 255, .3) 49.7% 50.3%, transparent 50.3%), radial-gradient(circle at 50% 30%, transparent 13%, rgba(249, 115, 22, .4) 13.3% 13.9%, transparent 14.2%), repeating-linear-gradient(90deg, rgba(255, 255, 255, .03) 0 2px, transparent 2px 70px), linear-gradient(180deg, transparent, rgba(30, 58, 138, .5));
+  transform: perspective(700px) rotateX(68deg); transform-origin: 50% 100%; }
+div:has(> .bg-orb-1)::after { content: "10"; position: fixed; right: -4vw; bottom: -10vh; pointer-events: none; font-family: var(--tvi-fd); font-weight: 900; font-size: 46vw; line-height: .8; letter-spacing: -.04em;
+  background: linear-gradient(180deg, #fff 0%, #9fb4ff 30%, #2f6bff 55%, transparent 95%); -webkit-background-clip: text; background-clip: text; color: transparent; opacity: .07; }
+
+/* títulos de estádio com tarja de abertura */
+.text-gradient { font-family: var(--tvi-fd) !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: .01em !important; font-size: clamp(34px, 5.2vw, 54px) !important; line-height: .95 !important;
+  background: linear-gradient(180deg, #ffffff 30%, #b9c9ff) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+.text-gradient::before { content: ""; display: block; width: 64px; height: 6px; margin-bottom: 12px; background: linear-gradient(90deg, var(--tvi-laranja), var(--tvi-azul-e)); clip-path: var(--tvi-corte); }
+.est-h1, .pd-section-title { font-family: var(--tvi-fd) !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: .02em !important; font-size: 26px !important; }
+
+/* botões viram placas cortadas na diagonal, com reflexo passando */
+.btn-c10 { border-radius: 0 !important; clip-path: var(--tvi-corte); font-family: var(--tvi-fd) !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: .05em !important; font-size: 1.12em; padding-left: 26px !important; padding-right: 26px !important; overflow: hidden; }
+.btn-c10::after { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .45), transparent); animation: tvi-reflexo 3.4s ease-in-out infinite; pointer-events: none; z-index: 1; }
+.btn-c10-ghost::after, .btn-c10-outline-dark::after, .btn-c10-outline-light::after { display: none; }
+.btn-c10-primary { background: linear-gradient(135deg, var(--tvi-laranja-q), var(--tvi-laranja)) !important; }
+.btn-c10-secondary { background: linear-gradient(135deg, var(--tvi-azul-e), var(--tvi-azul)) !important; }
+@keyframes tvi-reflexo { 0%, 55% { left: -60%; } 85%, 100% { left: 130%; } }
+
+/* cartões viram placas de transmissão */
+.card, .card-light, .est-kpi, .est-highlight-card { border-radius: 0 !important; position: relative; overflow: hidden; }
+.card { background: linear-gradient(100deg, rgba(14, 24, 52, .95), rgba(8, 12, 26, .9)) !important; border: 1px solid rgba(255, 255, 255, .08) !important; box-shadow: inset 5px 0 0 var(--tvi-laranja) !important; transition: transform .3s cubic-bezier(.34, 1.56, .64, 1), border-color .2s !important; }
+.card::after { content: ""; position: absolute; top: -50%; bottom: -50%; width: 26%; left: -50%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .08), transparent); transform: rotate(18deg); transition: left .7s ease; pointer-events: none; }
+.card:hover { transform: translateX(6px) !important; border-color: rgba(249, 115, 22, .45) !important; }
+.card:hover::after { left: 130%; }
+.card-light { box-shadow: inset 5px 0 0 var(--tvi-laranja), 0 24px 60px rgba(4, 6, 13, .14) !important; }
+.card-light::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px; background: repeating-linear-gradient(-45deg, var(--tvi-laranja) 0 10px, var(--tvi-azul) 10px 20px); }
+.est-kpi { box-shadow: inset 0 4px 0 var(--accent, var(--tvi-laranja)), 0 8px 20px -12px rgba(16, 22, 43, .2) !important; }
+.est-num { font-family: var(--tvi-fd) !important; font-weight: 900 !important; }
+
+/* campos de formulário: retos, com tarja laranja ao focar */
+.input, .input-light, .est-select { border-radius: 0 !important; transition: box-shadow .2s, border-color .2s !important; }
+.input:focus, .input-light:focus { box-shadow: inset 4px 0 0 var(--tvi-laranja), 0 0 0 3px rgba(249, 115, 22, .18) !important; border-color: var(--tvi-laranja) !important; }
+.label, .label-light { font-family: var(--tvi-fd) !important; font-weight: 800 !important; font-size: 14px !important; letter-spacing: .12em !important; }
+
+/* barra do topo do painel com selo AO VIVO */
+.tvi-nav { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px max(16px, 3vw); background: linear-gradient(180deg, rgba(4, 6, 13, .95), rgba(4, 6, 13, .78)); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.tvi-nav::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: repeating-linear-gradient(-45deg, var(--tvi-laranja) 0 10px, var(--tvi-azul) 10px 20px); background-size: 28px 28px; animation: tvi-fita 1.4s linear infinite; }
+@keyframes tvi-fita { to { background-position: 28px 0; } }
+.tvi-nav-esq { display: flex; align-items: center; gap: 14px; }
+.tvi-nav-esq img { height: 36px; width: auto; background: #fff; border-radius: 8px; padding: 2px; }
+.tvi-aovivo { display: inline-flex; align-items: center; gap: 8px; font-family: var(--tvi-fd); font-weight: 900; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; background: #e11d2e; color: #fff; padding: 4px 12px 4px 10px; clip-path: var(--tvi-corte); white-space: nowrap; }
+.tvi-aovivo i { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: tvi-pisca 1s steps(1) infinite; }
+.tvi-aovivo b { font-weight: 800; opacity: .85; }
+@keyframes tvi-pisca { 50% { opacity: .15; } }
+.tvi-admin { font-family: var(--tvi-fd); font-weight: 900; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; color: #fff; text-decoration: none; padding: 8px 18px; background: rgba(249, 115, 22, .16); box-shadow: inset 0 0 0 1.5px rgba(249, 115, 22, .5); clip-path: var(--tvi-corte); }
+.tvi-admin:hover { background: var(--tvi-laranja); }
+@media (max-width: 480px) { .tvi-aovivo b { display: none; } .tvi-nav-esq { gap: 10px; } }
+
+/* telas claras de entrada (login, cadastro, senha, termos): viram o ginásio escuro,
+   e o formulário fica como uma placa branca de transmissão por cima */
+:is(main, div):is([style*="#F0F0F0"], [style*="rgb(240, 240, 240)"]) { background: radial-gradient(120% 80% at 50% 110%, #12204a 0%, #04060d 60%) !important; }
+:is(main, div):is([style*="#F0F0F0"], [style*="rgb(240, 240, 240)"]) .card-light h1, :is(main, div):is([style*="#F0F0F0"], [style*="rgb(240, 240, 240)"]) .card-light h2 { font-family: var(--tvi-fd) !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: .02em !important; font-size: 40px !important; line-height: .95 !important; }
+:is(main, div):is([style*="#F0F0F0"], [style*="rgb(240, 240, 240)"]) > img, :is(main, div):is([style*="#F0F0F0"], [style*="rgb(240, 240, 240)"]) a > img { background: #fff; border-radius: 10px; padding: 3px; box-shadow: 0 0 0 3px rgba(255, 255, 255, .12), 0 0 40px rgba(47, 107, 255, .45); }
+:is(main, div):is([style*="#F0F0F0"], [style*="rgb(240, 240, 240)"]) .card-light { box-shadow: inset 5px 0 0 var(--tvi-laranja), 0 0 0 1px rgba(255, 255, 255, .5), 0 40px 100px rgba(0, 0, 0, .6), 0 0 80px rgba(47, 107, 255, .25) !important; }
+/* textos fora da placa branca (ex.: passos do cadastro) ficam claros sobre o ginásio */
+:is(main, div):is([style*="#F0F0F0"], [style*="rgb(240, 240, 240)"]) span:not(.card-light span) { color: #c6cfe6 !important; }
+:is(main, div):is([style*="#F0F0F0"], [style*="rgb(240, 240, 240)"]) .card-light h2 { font-size: 28px !important; }
