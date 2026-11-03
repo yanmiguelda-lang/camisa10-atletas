@@ -1,398 +1,250 @@
 import Link from "next/link";
-import Button from "@/components/Button";
+import "./transmissao.css";
+import { TvEfeitos, TvRelogio, TvVinheta } from "@/components/TvEfeitos";
 
-const FD = "'Big Shoulders Display', 'Outfit', 'Inter', system-ui, sans-serif";
+// Página inicial no conceito "Transmissão ao vivo": o atleta apresentado como
+// atração de TV esportiva. Estilos em transmissao.css; efeitos em TvEfeitos.
+
+const LETREIRO = ["210+ atletas", "3 polos", "Sub 7 ao Sub 11", "R$37 por mês", "sem contrato", "Santana de Parnaíba", "Barueri", "Osasco", "venha ser Camisa 10"];
+
+const RECURSOS = [
+  { icon: "⚽", cor: "#F97316", titulo: "Gols e assistências", texto: "Você registra após cada jogo. Simples, rápido, em menos de 1 minuto." },
+  { icon: "📅", cor: "#2F6BFF", titulo: "Histórico completo", texto: "Todos os jogos, datas e adversários guardados para sempre na plataforma." },
+  { icon: "🔗", cor: "#1E3A8A", titulo: "Link exclusivo", texto: "Um link único do seu filho. Manda no WhatsApp e todo mundo vê na hora." },
+  { icon: "🏅", cor: "#F97316", titulo: "Posição e categoria", texto: "Goleiro, fixo, ala ou pivô. Sub 7 ao Sub 11. Estatísticas por posição." },
+  { icon: "📸", cor: "#2F6BFF", titulo: "Fotos dos jogos", texto: "Coloque as fotos de cada partida. O perfil ganha vida com cada momento." },
+  { icon: "📱", cor: "#1E3A8A", titulo: "Em qualquer tela", texto: "Qualquer pessoa com o link vê o perfil. Sem precisar fazer login." },
+];
+
+const GOLS_POR_MES = [
+  { mes: "Fev", gols: 2 }, { mes: "Mar", gols: 4 }, { mes: "Abr", gols: 3 },
+  { mes: "Mai", gols: 5 }, { mes: "Jun", gols: 6 }, { mes: "Jul", gols: 3 },
+];
+
+function Botao({ href, children, vidro, pequeno, className = "" }: { href: string; children: React.ReactNode; vidro?: boolean; pequeno?: boolean; className?: string }) {
+  return (
+    <Link href={href} className={`tv-btn${vidro ? " vidro" : ""}${pequeno ? " pequeno" : ""} ${className}`.trim()}>
+      <span>{children}</span>
+    </Link>
+  );
+}
 
 export default function LandingPage() {
+  const temporada = new Date().getFullYear();
   return (
-    <main style={{ minHeight: "100vh", background: "#F0F0F0", fontFamily: "'Inter', system-ui, sans-serif" }}>
-      {/* ── NAV ── */}
-      <nav className="lp-nav">
-        <Link href="/" style={{ textDecoration: "none" }}>
-          <img src="/logo.png" alt="Perfil Camisa 10" style={{ height: 34, width: "auto", objectFit: "contain" }} />
-        </Link>
-        <div className="lp-nav-links" style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <Link href="/login" className="lp-nav-entrar">Entrar</Link>
-          <Button href="/cadastro" variant="primary" size="sm">Me inscrever →</Button>
+    <main className="tv">
+      <TvVinheta />
+      <TvEfeitos />
+
+      {/* ── TOPO COM SELO AO VIVO ── */}
+      <header className="tv-topo">
+        <div className="tv-topo-esq">
+          <Link href="/" aria-label="Perfil Camisa 10">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Perfil Camisa 10" />
+          </Link>
+          <span className="tv-aovivo"><i /><span>Ao vivo</span></span>
+          <TvRelogio />
         </div>
-      </nav>
+        <nav className="tv-topo-dir">
+          <Link href="/login" className="tv-link">Entrar</Link>
+          <Botao href="/cadastro" pequeno>Me inscrever →</Botao>
+        </nav>
+      </header>
 
-      {/* ── HERO ── */}
-      <section className="lp-hero" style={{ background: "#F0F0F0" }}>
-        <div className="lp-hero-text">
-          <div className="lp-hero-proof">
-            <div style={{ display: "flex" }}>
-              {["👦", "👧", "👦", "👦", "👧"].map((e, i) => (
-                <div
-                  key={i}
-                  style={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: "50%",
-                    background: i % 2 === 0 ? "#1E3A8A" : "#F97316",
-                    border: "2px solid #F0F0F0",
-                    marginLeft: i > 0 ? -10 : 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: 13,
-                    position: "relative",
-                    zIndex: 5 - i,
-                  }}
-                >
-                  {e}
-                </div>
-              ))}
-            </div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: 13, color: "#0A0A0A" }}>Já são mais de 210 atletas</div>
-              <div style={{ fontSize: 11, color: "#888", marginTop: 1 }}>Venha fazer parte, venha ser Camisa 10!</div>
-            </div>
-          </div>
+      {/* ── ABERTURA: GINÁSIO À NOITE ── */}
+      <section className="tv-abertura">
+        <div className="tv-holofote h1" aria-hidden="true" />
+        <div className="tv-holofote h2" aria-hidden="true" />
+        <div className="tv-piso" aria-hidden="true"><div className="tv-piso-plano" /></div>
+        <div className="tv-dez" aria-hidden="true">10</div>
 
-          <h1 className="lp-hero-h1">
-            SEU
-            <br />
-            FILHO
-            <br />É UM
-            <br />
-            <span style={{ color: "#F97316" }}>CRAQUE</span>
+        <div className="tv-abertura-texto">
+          <div className="tv-etiqueta">Transmissão oficial · Temporada {temporada}</div>
+          <h1 className="tv-manchete">
+            <span className="placa p1"><span>Seu filho</span></span>
+            <span className="placa p2"><span>é o craque</span></span>
+            <span className="placa p3"><span>do jogo.</span></span>
           </h1>
-
-          <p className="lp-hero-p">
+          <p className="tv-sub">
             Registre cada gol, cada assistência, cada conquista do seu atleta. Crie o perfil dele agora e
-            compartilhe com toda a família.
+            compartilhe com toda a família. Já são mais de 210 atletas: venha ser Camisa 10!
           </p>
-
-          <div className="lp-hero-btns">
-            <Button href="/cadastro" variant="primary">Criar perfil agora →</Button>
-            <Button href="/login" variant="outline-dark">Já tenho conta</Button>
+          <div className="tv-acoes">
+            <Botao href="/cadastro">Criar perfil agora →</Botao>
+            <Botao href="/login" vidro>Já tenho conta</Botao>
           </div>
         </div>
 
-        <div className="lp-hero-img">
-          <div className="c10-bg">C10</div>
-          <div className="lp-hero-img-inner">
+        <div className="tv-palco">
+          <div className="tv-monitor">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/hero-atleta.png" alt="Atleta Camisa 10 comemorando conquista" />
-            <div
-              className="lp-float-card"
-              style={{
-                position: "absolute",
-                bottom: 56,
-                right: 0,
-                background: "#0A0A0A",
-                borderRadius: 12,
-                padding: "14px 18px",
-                minWidth: 140,
-                boxShadow: "0 16px 48px rgba(0,0,0,0.25)",
-                zIndex: 2,
-              }}
-            >
-              <div style={{ fontSize: 10, color: "#666", fontWeight: 700, textTransform: "uppercase", letterSpacing: 1, marginBottom: 3 }}>
-                Último jogo
-              </div>
-              <div style={{ fontFamily: FD, fontSize: 26, fontWeight: 900, color: "#F97316", lineHeight: 1 }}>3 Gols</div>
-              <div style={{ fontSize: 11, color: "#555", marginTop: 3 }}>2 Assistências</div>
-            </div>
-            <div
-              className="lp-float-card"
-              style={{ position: "absolute", top: 40, left: 0, background: "#1E3A8A", borderRadius: 10, padding: "10px 14px", zIndex: 2 }}
-            >
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>
-                Categoria
-              </div>
-              <div style={{ fontFamily: FD, fontSize: 18, fontWeight: 900, color: "#fff", lineHeight: 1, marginTop: 2 }}>Sub 10</div>
-            </div>
+            <span className="tv-cam"><i />Câmera 1</span>
           </div>
+          <div className="tv-grafico tv-terco">
+            <div className="num"><span>10</span></div>
+            <div className="nome"><b>Seu filho</b><small>Ala · Camisa 10 F.C.</small></div>
+          </div>
+          <div className="tv-grafico tv-placarzinho">
+            <small>Último jogo</small>
+            <b>3 gols</b>
+            <span>2 assistências</span>
+          </div>
+          <div className="tv-grafico tv-categoria"><span>Sub 10</span></div>
         </div>
       </section>
 
-      {/* ── STATS ── */}
-      <section className="lp-stats">
-        <div className="lp-stats-inner" style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <div className="lp-stats-nums">
-            {[
-              { val: "210+", label: "atletas na escola" },
-              { val: "3", label: "polos ativos" },
-              { val: "Sub 7–11", label: "categorias disputadas" },
-              { val: "R$37", label: "por mês, sem contrato" },
-            ].map((s, i) => (
-              <div key={i}>
-                <div className="lp-stat-val">{s.val}</div>
-                <div className="lp-stat-lbl">{s.label}</div>
-              </div>
-            ))}
-          </div>
+      {/* ── LETREIRO DE LED DE BEIRA DE QUADRA ── */}
+      <div className="tv-led" aria-label="210 atletas, 3 polos, Sub 7 ao Sub 11, a partir de R$37 por mês">
+        <div className="tv-led-trilho" aria-hidden="true">
+          {[...LETREIRO, ...LETREIRO, ...LETREIRO, ...LETREIRO].map((t, i) => <span key={i}>{t} ⚽</span>)}
+        </div>
+      </div>
 
-          <div className="lp-stats-text">
-            <div className="lp-stats-text-main">Esses são alguns números nossos...</div>
-            <div className="lp-stats-text-sub">
-              O sonho do seu filho <em style={{ color: "#F97316", fontStyle: "italic", fontWeight: 700 }}>merece ser registrado</em>
-            </div>
-          </div>
-
-          <div className="lp-stats-btns">
-            <Button href="/login" variant="outline-dark">Já tenho conta →</Button>
-            <Button href="/cadastro" variant="primary">Criar perfil →</Button>
+      {/* ── PLACAR DO GINÁSIO ── */}
+      <section className="tv-secao">
+        <div className="tv-placar tv-revela">
+          <div className="tv-placar-topo"><span>Camisa 10 F.C.</span><b>Esses são alguns números nossos</b><span>{temporada}</span></div>
+          <div className="tv-placar-grade">
+            <div className="tv-cel"><b data-contar="210" data-sufixo="+">0</b><span>atletas na escola</span></div>
+            <div className="tv-cel"><b data-contar="3">0</b><span>polos ativos</span></div>
+            <div className="tv-cel"><b>Sub 7–11</b><span>categorias disputadas</span></div>
+            <div className="tv-cel"><b data-contar="37" data-prefixo="R$">R$0</b><span>por mês, sem contrato</span></div>
           </div>
         </div>
+        <p className="tv-texto tv-revela" style={{ marginTop: 34, textAlign: "center", marginLeft: "auto", marginRight: "auto" }}>
+          O sonho do seu filho <strong style={{ color: "#FF8A1F" }}>merece ser registrado</strong>.
+        </p>
       </section>
 
-      {/* ── DARK: APP + CHART ── */}
-      <section className="lp-dark-app">
-        <div className="lp-dark-app-inner">
-          <div className="lp-dark-app-text">
-            <h2>
-              APRIMORAMENTO
-              <br />
-              CONTÍNUO
-            </h2>
-            <p>
-              Acompanhe a evolução do seu atleta temporada após temporada. Cada registro vira história, cada
-              conquista vira memória.
-            </p>
-            <Button href="/cadastro" variant="primary">Fazer inscrição →</Button>
+      {/* ── REPLAY: O PERFIL NA TELA ── */}
+      <section className="tv-secao">
+        <div className="tv-dupla">
+          <div className="tv-revela">
+            <div className="tv-etiqueta">Replay da temporada</div>
+            <h2 className="tv-titulo">Aprimoramento <em>contínuo</em></h2>
+            <p className="tv-texto">Acompanhe a evolução do seu atleta temporada após temporada. Cada registro vira história, cada conquista vira memória.</p>
+            <Botao href="/cadastro">Fazer inscrição →</Botao>
           </div>
-          <div className="lp-dark-app-visual">
-            <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse at 60% 50%, rgba(30,58,138,0.35) 0%, transparent 65%)", pointerEvents: "none" }} />
-            <div style={{ position: "relative", zIndex: 1, background: "#111", borderRadius: 20, padding: 24, border: "1px solid rgba(255,255,255,0.07)", boxShadow: "0 32px 80px rgba(0,0,0,0.60)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                <div>
-                  <div style={{ fontSize: 11, color: "#555", fontWeight: 600, textTransform: "uppercase", letterSpacing: 1 }}>Perfil do Atleta</div>
-                  <div style={{ fontFamily: FD, fontSize: 16, fontWeight: 800, color: "#fff", marginTop: 2 }}>Lucas Mendes · Sub 10</div>
-                </div>
-                <div style={{ background: "rgba(249,115,22,0.15)", border: "1px solid rgba(249,115,22,0.30)", borderRadius: 99, padding: "5px 12px", fontSize: 11, color: "#F97316", fontWeight: 700 }}>
-                  ● Temporada {new Date().getFullYear()}
-                </div>
+          <div className="tv-tela tv-revela" style={{ ["--d" as string]: ".15s" }}>
+            <div className="tv-tela-dentro">
+              <span className="tv-replay"><span>Replay</span></span>
+              <div className="tv-perfil-cab"><small>Perfil do atleta · Temporada {temporada}</small><b>Lucas Mendes · Sub 10</b></div>
+              <div className="tv-numeros">
+                <div style={{ ["--c" as string]: "#FF8A1F" }}><b>23</b><span>Gols</span></div>
+                <div style={{ ["--c" as string]: "#2F6BFF" }}><b>14</b><span>Assist.</span></div>
+                <div style={{ ["--c" as string]: "#22C55E" }}><b>31</b><span>Jogos</span></div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 20 }}>
-                {[
-                  { val: "23", label: "Gols", color: "#F97316" },
-                  { val: "14", label: "Assist.", color: "#1E3A8A" },
-                  { val: "31", label: "Jogos", color: "#22c55e" },
-                ].map((s) => (
-                  <div key={s.label} style={{ background: "#1a1a1a", borderRadius: 12, padding: "14px 12px", textAlign: "center", border: "1px solid rgba(255,255,255,0.05)" }}>
-                    <div style={{ fontFamily: FD, fontSize: 28, fontWeight: 900, color: s.color, lineHeight: 1 }}>{s.val}</div>
-                    <div style={{ fontSize: 11, color: "#555", marginTop: 4, fontWeight: 600 }}>{s.label}</div>
+              <small style={{ fontFamily: "var(--fd)", fontWeight: 800, letterSpacing: ".14em", color: "#8D9AB8", textTransform: "uppercase", fontSize: 13 }}>Gols por mês</small>
+              <div className="tv-barras">
+                {GOLS_POR_MES.map((m, i) => (
+                  <div key={m.mes}>
+                    <i style={{ ["--h" as string]: `${(m.gols / 6) * 100}%`, ["--d" as string]: `${0.3 + i * 0.08}s` }} />
+                    <small>{m.mes}</small>
                   </div>
                 ))}
               </div>
-              <div style={{ background: "#1a1a1a", borderRadius: 14, padding: "18px 16px", marginBottom: 14, border: "1px solid rgba(255,255,255,0.04)" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.8 }}>Gols por mês</span>
-                  <span style={{ fontSize: 10, color: "#333", fontWeight: 600 }}>{new Date().getFullYear()}</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 72 }}>
-                  {[
-                    { mes: "Mar", gols: 2 },
-                    { mes: "Abr", gols: 4 },
-                    { mes: "Mai", gols: 3 },
-                    { mes: "Jun", gols: 5 },
-                    { mes: "Jul", gols: 6 },
-                    { mes: "Ago", gols: 3 },
-                  ].map((d, i) => (
-                    <div key={d.mes} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6, height: "100%", justifyContent: "flex-end" }}>
-                      <div style={{ fontSize: 9, fontWeight: 700, color: "#F97316" }}>{d.gols}</div>
-                      <div style={{ width: "100%", height: `${(d.gols / 6) * 100}%`, background: i === 4 ? "#F97316" : "linear-gradient(to top,#1E3A8A,rgba(30,58,138,0.5))", borderRadius: "4px 4px 2px 2px", minHeight: 8 }} />
-                      <div style={{ fontSize: 9, color: "#444", fontWeight: 500 }}>{d.mes}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div style={{ background: "#1a1a1a", borderRadius: 14, padding: "16px", border: "1px solid rgba(255,255,255,0.04)" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.8, marginBottom: 12 }}>Evolução da temporada</div>
-                <svg viewBox="0 0 280 72" style={{ width: "100%", overflow: "visible" }}>
-                  <defs>
-                    <linearGradient id="lg" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#F97316" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#F97316" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  {[0, 24, 48, 72].map((y) => (
-                    <line key={y} x1="0" y1={y} x2="280" y2={y} stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
-                  ))}
-                  <path d="M0,60 L46,48 L93,36 L140,28 L186,20 L233,12 L280,6 L280,72 L0,72 Z" fill="url(#lg)" />
-                  <path d="M0,60 L46,48 L93,36 L140,28 L186,20 L233,12 L280,6" fill="none" stroke="#F97316" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                  {[[0, 60], [46, 48], [93, 36], [140, 28], [186, 20], [233, 12], [280, 6]].map(([x, y], i) => (
-                    <circle key={i} cx={x} cy={y} r={i === 6 ? 5 : 3} fill={i === 6 ? "#F97316" : "#1E3A8A"} stroke="#111" strokeWidth="1.5" />
-                  ))}
-                </svg>
-              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── FEATURES ── */}
-      <section className="lp-features">
-        <div className="lp-features-inner">
-          <div className="lp-features-head">
-            <h2>
-              NOSSA TÁTICA
-              <br />
-              É BASEADA
-              <br />
-              NOS PILARES:
-            </h2>
-            <p>
-              Uma plataforma completa para registrar, acompanhar e celebrar cada passo da carreira do seu atleta
-              dentro e fora de quadra.
-            </p>
-          </div>
-          <div className="lp-features-grid">
-            {[
-              { icon: "⚽", color: "#1E3A8A", title: "Gols e assistências", desc: "Você registra após cada jogo. Simples, rápido, em menos de 1 minuto." },
-              { icon: "📅", color: "#F97316", title: "Histórico completo", desc: "Todos os jogos, datas e adversários guardados para sempre na plataforma." },
-              { icon: "🔗", color: "#0A0A0A", title: "Link exclusivo", desc: "Um link único do seu filho. Manda no WhatsApp e todo mundo vê na hora." },
-              { icon: "🏅", color: "#1E3A8A", title: "Posição e categoria", desc: "Goleiro, fixo, ala ou pivô. Sub 7 ao Sub 11. Estatísticas por posição." },
-              { icon: "📸", color: "#F97316", title: "Fotos dos jogos", desc: "Coloque as fotos de cada partida. O perfil ganha vida com cada momento." },
-              { icon: "📱", color: "#0A0A0A", title: "Funciona em qualquer tela", desc: "Qualquer pessoa com o link vê o perfil. Sem precisar fazer login." },
-            ].map((f) => (
-              <div key={f.title}>
-                <div style={{ width: 48, height: 48, borderRadius: 10, background: f.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, marginBottom: 14 }}>
-                  {f.icon}
-                </div>
-                <div style={{ fontWeight: 700, fontSize: 15, color: "#0A0A0A", marginBottom: 6 }}>{f.title}</div>
-                <div style={{ fontSize: 14, color: "#666", lineHeight: 1.75 }}>{f.desc}</div>
-              </div>
-            ))}
-          </div>
+      {/* ── ESCALAÇÃO: OS RECURSOS ── */}
+      <section className="tv-secao">
+        <div className="tv-revela">
+          <div className="tv-etiqueta">A escalação</div>
+          <h2 className="tv-titulo">Nossa tática é <em>baseada nos pilares</em></h2>
+          <p className="tv-texto">Uma plataforma completa para registrar, acompanhar e celebrar cada passo da carreira do seu atleta dentro e fora de quadra.</p>
+        </div>
+        <div className="tv-cards">
+          {RECURSOS.map((r, i) => (
+            <div key={r.titulo} className="tv-card tv-revela" style={{ ["--c" as string]: r.cor, ["--d" as string]: `${(i % 3) * 0.1}s` }}>
+              <span className="n">{String(i + 1).padStart(2, "0")}</span>
+              <div className="ic"><span>{r.icon}</span></div>
+              <h3>{r.titulo}</h3>
+              <p>{r.texto}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ── DARK ATHLETE ── */}
-      <section className="lp-athlete">
-        <div className="lp-athlete-photo">
+      {/* ── CARREIRA EM NÚMEROS ── */}
+      <section className="tv-carreira">
+        <div className="tv-carreira-foto">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/stats-atleta.png" alt="Card de estatísticas de um atleta Camisa 10" />
-          <div className="lp-athlete-photo-overlay" />
         </div>
-        <div className="lp-athlete-text">
-          <div className="lp-athlete-badge">⚽ Registro em tempo real</div>
-          <h2 className="lp-athlete-h2">
-            A CARREIRA
-            <br />
-            DO SEU FILHO
-            <br />
-            EM NÚMEROS
-          </h2>
-          <p className="lp-athlete-p">
-            Cada jogo registrado. Cada gol guardado. Acompanhe a evolução do seu atleta temporada após temporada
-            com o perfil completo.
-          </p>
-          <Button href="/cadastro" variant="primary">Criar perfil agora →</Button>
+        <div className="tv-carreira-texto tv-revela">
+          <div className="tv-selo"><span>⚽ Registro em tempo real</span></div>
+          <h2 className="tv-titulo">A carreira do seu filho <em>em números</em></h2>
+          <p className="tv-texto">Cada jogo registrado. Cada gol guardado. Acompanhe a evolução do seu atleta temporada após temporada com o perfil completo.</p>
+          <Botao href="/cadastro">Criar perfil agora →</Botao>
         </div>
       </section>
 
-      {/* ── PRICING ── */}
-      <section className="lp-pricing">
-        <div className="lp-pricing-inner">
-          <h2>
-            ESCOLHA O PLANO
-            <br />
-            DO SEU ATLETA
-          </h2>
-          <p>O perfil do seu filho custa 1 bala por dia, e vale mais do que você pode imaginar.</p>
-          <div className="lp-pricing-grid">
-            {/* TORCIDA */}
-            <div style={{ background: "#fff", border: "1.5px solid rgba(0,0,0,0.08)", borderRadius: 16, padding: "32px 24px" }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: "#1E3A8A", letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 16 }}>
-                🔵 PLANO TORCIDA
-              </div>
-              <div style={{ marginBottom: 4 }}>
-                <span style={{ fontFamily: FD, fontSize: 56, fontWeight: 900, color: "#0A0A0A", letterSpacing: -3, lineHeight: 1 }}>R$37</span>
-                <span style={{ fontSize: 14, color: "#999", marginLeft: 4 }}>/mês</span>
-              </div>
-              <p style={{ fontSize: 13, color: "#777", marginBottom: 24 }}>Manda o link no grupo da família.</p>
-              <div style={{ marginBottom: 28 }}>
-                {["Perfil com link exclusivo do atleta", "Foto de perfil do seu filho", "Gols, assistências e defesas por jogo", "Histórico completo de partidas", "Qualquer pessoa vê com o link"].map((item) => (
-                  <div key={item} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, fontSize: 13, color: "#444" }}>
-                    <div style={{ width: 20, height: 20, background: "#1E3A8A", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 10, fontWeight: 800, flexShrink: 0 }}>
-                      ✓
-                    </div>
-                    {item}
-                  </div>
-                ))}
-              </div>
-              <Button href="/cadastro" variant="secondary" style={{ width: "100%" }}>Começar com Torcida →</Button>
-              <p style={{ fontSize: 11, color: "#aaa", marginTop: 12, textAlign: "center" }}>PIX · Sem contrato · Cancele quando quiser</p>
-            </div>
-
-            {/* CRAQUE */}
-            <div style={{ background: "#0A0A0A", borderRadius: 16, padding: "32px 24px", position: "relative" }}>
-              <div style={{ position: "absolute", top: -13, left: 24, background: "#F97316", color: "#000", fontSize: 10, fontWeight: 800, padding: "5px 16px", borderRadius: 99, letterSpacing: 1.5, textTransform: "uppercase" }}>
-                MAIS POPULAR
-              </div>
-              <div style={{ fontSize: 11, fontWeight: 800, color: "#F97316", letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 16 }}>
-                🟠 PLANO CRAQUE
-              </div>
-              <div style={{ marginBottom: 4 }}>
-                <span style={{ fontFamily: FD, fontSize: 56, fontWeight: 900, color: "#fff", letterSpacing: -3, lineHeight: 1 }}>R$57</span>
-                <span style={{ fontSize: 14, color: "#555", marginLeft: 4 }}>/mês</span>
-              </div>
-              <p style={{ fontSize: 13, color: "#666", marginBottom: 24 }}>Cada jogo registrado. Cada momento guardado.</p>
-              <div style={{ marginBottom: 28 }}>
-                {["Tudo do Plano Torcida", "Foto em cada jogo", "Álbum automático da temporada", "Galeria visível no perfil público", "Memória completa da carreira"].map((item, i) => (
-                  <div key={item} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, fontSize: 13, color: i === 0 ? "#555" : "#bbb" }}>
-                    <div style={{ width: 20, height: 20, background: "#F97316", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center", color: "#000", fontSize: 10, fontWeight: 800, flexShrink: 0 }}>
-                      ✓
-                    </div>
-                    <span style={{ fontStyle: i === 0 ? "italic" : "normal" }}>{item}</span>
-                  </div>
-                ))}
-              </div>
-              <Button href="/cadastro" variant="primary" style={{ width: "100%" }}>Garantir Craque — R$57/mês →</Button>
-              <p style={{ fontSize: 11, color: "#444", marginTop: 12, textAlign: "center" }}>PIX · Sem contrato · Cancele quando quiser</p>
-            </div>
+      {/* ── PLANOS ── */}
+      <section className="tv-secao">
+        <div className="tv-revela" style={{ textAlign: "center" }}>
+          <div className="tv-etiqueta">Escolha o plano</div>
+          <h2 className="tv-titulo">Do seu <em>atleta</em></h2>
+          <p className="tv-texto" style={{ margin: "0 auto" }}>O perfil do seu filho custa 1 bala por dia, e vale mais do que você pode imaginar.</p>
+        </div>
+        <div className="tv-planos" style={{ marginLeft: "auto", marginRight: "auto" }}>
+          <div className="tv-plano tv-revela">
+            <span className="tag"><span>🔵 Plano Torcida</span></span>
+            <h3>Torcida</h3>
+            <div className="tv-preco"><b>R$37</b><span>/mês</span></div>
+            <p className="frase">Manda o link no grupo da família.</p>
+            <ul>
+              {["Perfil com link exclusivo do atleta", "Foto de perfil do seu filho", "Gols, assistências e defesas por jogo", "Histórico completo de partidas", "Qualquer pessoa vê com o link"].map((item) => <li key={item}>{item}</li>)}
+            </ul>
+            <Botao href="/cadastro" vidro className="btn-largo">Começar com Torcida →</Botao>
+            <small className="rodape">PIX · Sem contrato · Cancele quando quiser</small>
+          </div>
+          <div className="tv-plano craque tv-revela" style={{ ["--d" as string]: ".12s" }}>
+            <span className="tag"><span>🟠 Mais popular</span></span>
+            <h3>Craque</h3>
+            <div className="tv-preco"><b>R$57</b><span>/mês</span></div>
+            <p className="frase">Cada jogo registrado. Cada momento guardado.</p>
+            <ul>
+              {["Tudo do Plano Torcida", "Foto em cada jogo", "Álbum automático da temporada", "Galeria visível no perfil público", "Memória completa da carreira"].map((item) => <li key={item}>{item}</li>)}
+            </ul>
+            <Botao href="/cadastro" className="btn-largo">Garantir Craque →</Botao>
+            <small className="rodape">PIX · Sem contrato · Cancele quando quiser</small>
           </div>
         </div>
       </section>
 
-      {/* ── CTA BANNER ── */}
-      <section className="lp-cta">
-        <p>Registre a história do seu atleta e compartilhe cada conquista com quem você ama.</p>
-        <Button href="/cadastro" variant="primary">Criar perfil agora →</Button>
+      {/* ── CHAMADA FINAL ── */}
+      <section className="tv-final">
+        <h2 className="tv-titulo tv-revela">Registre a história do seu atleta e compartilhe cada conquista</h2>
+        <Botao href="/cadastro">Criar perfil agora →</Botao>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer className="lp-footer">
-        <div className="lp-footer-inner">
-          <div className="lp-footer-grid">
-            <div>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Perfil Camisa 10" style={{ height: 36, marginBottom: 14 }} />
-              <p style={{ fontSize: 13, color: "#475569", lineHeight: 1.8, maxWidth: 280 }}>
-                O perfil profissional do seu atleta. Escola de futsal com polos em Santana de Parnaíba, Barueri e
-                Osasco.
-              </p>
-            </div>
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 800, color: "#F97316", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>
-                Camisa 10 F.C.
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <a href="https://wa.me/5511947928105" target="_blank" rel="noopener noreferrer" style={{ color: "#94a3b8", textDecoration: "none", fontSize: 14 }}>
-                  📲 (11) 94792-8105
-                </a>
-                <Link href="/login" style={{ color: "#94a3b8", textDecoration: "none", fontSize: 14 }}>Entrar na conta</Link>
-                <Link href="/cadastro" style={{ color: "#94a3b8", textDecoration: "none", fontSize: 14 }}>Criar perfil</Link>
-              </div>
-            </div>
-            <div>
-              <div style={{ fontSize: 11, fontWeight: 800, color: "#F97316", letterSpacing: 2, textTransform: "uppercase", marginBottom: 14 }}>Polos</div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {["Santana de Parnaíba", "Barueri — ACERB", "Osasco — Metalclube"].map((p) => (
-                  <span key={p} style={{ color: "#94a3b8", fontSize: 14 }}>{p}</span>
-                ))}
-              </div>
-            </div>
+      {/* ── RODAPÉ ── */}
+      <footer className="tv-rodape">
+        <div className="tv-rodape-grade">
+          <div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.png" alt="Perfil Camisa 10" />
+            <p style={{ margin: 0, maxWidth: "42ch", lineHeight: 1.7 }}>O perfil profissional do seu atleta. Escola de futsal com polos em Santana de Parnaíba, Barueri e Osasco.</p>
           </div>
-          <div className="lp-footer-bottom">
-            <span style={{ color: "#334155", fontSize: 12 }}>Camisa 10 F.C. · Escola de Futsal</span>
-            <span style={{ color: "#334155", fontSize: 12 }}>Todos os direitos reservados · {new Date().getFullYear()}</span>
+          <div>
+            <h4>Polos</h4>
+            <span style={{ display: "block", padding: "3px 0" }}>Santana de Parnaíba</span>
+            <span style={{ display: "block", padding: "3px 0" }}>Barueri · ACERB</span>
+            <span style={{ display: "block", padding: "3px 0" }}>Osasco · Metalclube</span>
+          </div>
+          <div>
+            <h4>Camisa 10 F.C.</h4>
+            <a href="https://wa.me/5511947928105" target="_blank" rel="noopener noreferrer">📲 (11) 94792-8105</a>
+            <Link href="/login">Entrar na conta</Link>
+            <Link href="/cadastro">Criar perfil</Link>
+            <Link href="/termos">Termos de uso</Link>
           </div>
         </div>
+        <div className="tv-rodape-fim">Camisa 10 F.C. · Escola de Futsal · Todos os direitos reservados · {temporada}</div>
       </footer>
     </main>
   );

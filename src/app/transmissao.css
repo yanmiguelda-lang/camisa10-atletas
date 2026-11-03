@@ -1,0 +1,263 @@
+/* =====================================================================
+   "TRANSMISSÃO AO VIVO" · página inicial do Perfil Camisa 10
+   linguagem de TV esportiva: placas inclinadas de vidro, vinheta com o
+   escudo, selo AO VIVO, letreiro de LED de beira de quadra e holofotes
+   ===================================================================== */
+.tv {
+  --noite: #04060d;
+  --noite-2: #0a1020;
+  --azul: #1e3a8a;
+  --azul-eletrico: #2f6bff;
+  --laranja: #f97316;
+  --laranja-quente: #ff8a1f;
+  --branco: #f5f7ff;
+  --cinza: #8d9ab8;
+  --fd: "Big Shoulders Display", "Outfit", system-ui, sans-serif;
+  --inclina: -12deg;
+  --mola: cubic-bezier(.34, 1.56, .64, 1);
+  --suave: cubic-bezier(.22, 1, .36, 1);
+  background: var(--noite);
+  color: var(--branco);
+  font-family: "Inter", system-ui, sans-serif;
+  overflow-x: clip;
+  min-height: 100vh;
+}
+.tv * { box-sizing: border-box; }
+.tv a { color: inherit; text-decoration: none; }
+
+/* ---------- vinheta de abertura (uma vez por sessão) ---------- */
+.tv-vinheta { position: fixed; inset: 0; z-index: 100; pointer-events: none; overflow: hidden; }
+.tv-vinheta .lamina { position: absolute; top: -20%; bottom: -20%; width: 70%; transform: skewX(var(--inclina)) translateX(-160%); }
+.tv-vinheta .l1 { left: -10%; background: var(--azul); animation: tv-lamina 1.5s cubic-bezier(.77, 0, .18, 1) both; }
+.tv-vinheta .l2 { left: 15%; background: var(--laranja); animation: tv-lamina 1.5s cubic-bezier(.77, 0, .18, 1) .08s both; }
+.tv-vinheta .l3 { left: 40%; background: #fff; animation: tv-lamina 1.5s cubic-bezier(.77, 0, .18, 1) .16s both; }
+.tv-vinheta .l4 { left: 65%; background: var(--noite-2); animation: tv-lamina 1.5s cubic-bezier(.77, 0, .18, 1) .24s both; }
+.tv-vinheta img { position: absolute; left: 50%; top: 50%; width: min(34vw, 220px); transform: translate(-50%, -50%) scale(0); animation: tv-escudo 1.6s var(--suave) both; filter: drop-shadow(0 0 40px rgba(47, 107, 255, .8)); }
+.tv-vinheta .flash { position: absolute; inset: 0; background: #fff; opacity: 0; animation: tv-flash 1.6s ease both; }
+@keyframes tv-lamina { 0% { transform: skewX(var(--inclina)) translateX(-160%); } 45%, 55% { transform: skewX(var(--inclina)) translateX(0); } 100% { transform: skewX(var(--inclina)) translateX(260%); } }
+@keyframes tv-escudo { 0%, 25% { transform: translate(-50%, -50%) scale(0) rotate(-40deg); opacity: 1; } 50% { transform: translate(-50%, -50%) scale(1.15) rotate(4deg); opacity: 1; } 70% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(2.4); opacity: 0; } }
+@keyframes tv-flash { 0%, 62% { opacity: 0; } 66% { opacity: .85; } 100% { opacity: 0; } }
+
+/* ---------- barra do topo com o selo AO VIVO ---------- */
+.tv-topo { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px max(16px, 3vw); background: linear-gradient(180deg, rgba(4, 6, 13, .92), rgba(4, 6, 13, .55)); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, .06); }
+.tv-topo-esq { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.tv-topo-esq img { height: 36px; width: auto; background: #fff; border-radius: 8px; padding: 2px; }
+.tv-aovivo { display: inline-flex; align-items: center; gap: 8px; font-family: var(--fd); font-weight: 900; font-size: 15px; letter-spacing: .08em; text-transform: uppercase; background: #e11d2e; color: #fff; padding: 4px 12px 4px 10px; transform: skewX(var(--inclina)); }
+.tv-aovivo > * { transform: skewX(12deg); }
+.tv-aovivo i { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: tv-pisca 1s steps(1) infinite; }
+.tv-relogio { font-family: var(--fd); font-weight: 800; font-size: 18px; color: var(--cinza); letter-spacing: .06em; }
+@keyframes tv-pisca { 50% { opacity: .15; } }
+.tv-topo-dir { display: flex; align-items: center; gap: 8px; }
+.tv-link { font-weight: 700; font-size: 14px; color: var(--cinza); padding: 10px 12px; transition: color .2s; }
+.tv-link:hover { color: #fff; }
+
+/* ---------- botões de transmissão (placa inclinada com reflexo) ---------- */
+.tv-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 15px 30px; font-family: var(--fd); font-weight: 900; font-size: 21px; letter-spacing: .04em; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, var(--laranja-quente), var(--laranja)); transform: skewX(var(--inclina)); overflow: hidden; box-shadow: 6px 6px 0 var(--azul), 0 18px 40px rgba(249, 115, 22, .35); transition: transform .25s var(--mola), box-shadow .25s; }
+.tv-btn > span { display: inline-block; transform: skewX(12deg); }
+.tv-btn::after { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; left: -60%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .55), transparent); animation: tv-reflexo 3.2s ease-in-out infinite; }
+.tv-btn:hover { transform: skewX(var(--inclina)) translate(-3px, -3px); box-shadow: 9px 9px 0 var(--azul), 0 22px 46px rgba(249, 115, 22, .45); }
+.tv-btn:active { transform: skewX(var(--inclina)) translate(2px, 2px); box-shadow: 2px 2px 0 var(--azul); }
+.tv-btn.vidro { background: rgba(255, 255, 255, .06); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .25); }
+.tv-btn.vidro::after { display: none; }
+.tv-btn.vidro:hover { background: rgba(255, 255, 255, .12); box-shadow: inset 0 0 0 2px #fff; }
+.tv-btn.pequeno { padding: 9px 18px; font-size: 16px; box-shadow: 4px 4px 0 var(--azul); }
+@keyframes tv-reflexo { 0%, 55% { left: -60%; } 85%, 100% { left: 130%; } }
+
+/* ---------- abertura: ginásio à noite ---------- */
+.tv-abertura { position: relative; min-height: 100svh; padding: 92px max(16px, 4vw) 0; display: grid; grid-template-columns: 1fr; align-items: end; overflow: hidden; isolation: isolate; }
+.tv-holofote { position: absolute; top: -30%; width: 60vmax; height: 140vmax; z-index: -2; background: conic-gradient(from 180deg at 50% 0%, transparent 168deg, rgba(120, 160, 255, .16) 176deg, rgba(200, 220, 255, .22) 180deg, rgba(120, 160, 255, .16) 184deg, transparent 192deg); filter: blur(6px); transform-origin: 50% 0%; }
+.tv-holofote.h1 { left: -12%; animation: tv-varre 9s ease-in-out infinite alternate; }
+.tv-holofote.h2 { right: -12%; animation: tv-varre 11s ease-in-out -4s infinite alternate-reverse; }
+@keyframes tv-varre { from { transform: rotate(-22deg); } to { transform: rotate(18deg); } }
+.tv-piso { position: absolute; left: -30%; right: -30%; bottom: -10%; height: 55%; z-index: -1; perspective: 700px; }
+.tv-piso-plano { position: absolute; inset: 0; transform: rotateX(68deg); transform-origin: 50% 100%;
+  background:
+    linear-gradient(90deg, transparent 49.7%, rgba(255, 255, 255, .5) 49.7% 50.3%, transparent 50.3%),
+    radial-gradient(circle at 50% 30%, transparent 13%, rgba(249, 115, 22, .55) 13.3% 13.9%, transparent 14.2%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, .025) 0 2px, transparent 2px 70px),
+    linear-gradient(180deg, #1a2a5c, #0b1430 70%);
+  box-shadow: inset 0 0 0 4px rgba(255, 255, 255, .35); }
+.tv-piso::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, var(--noite) 0%, transparent 35%); }
+
+.tv-dez { position: absolute; z-index: -1; right: -4vw; top: 12%; font-family: var(--fd); font-weight: 900; font-size: clamp(300px, 52vw, 820px); line-height: .78; letter-spacing: -.04em;
+  background: linear-gradient(180deg, #ffffff 0%, #9fb4ff 30%, #2f6bff 55%, #0b1430 90%); -webkit-background-clip: text; background-clip: text; color: transparent; opacity: .16; animation: tv-dez 2s var(--suave) .4s both; }
+@keyframes tv-dez { from { opacity: 0; transform: translateY(120px) scale(.9); } to { opacity: .16; transform: none; } }
+
+.tv-abertura-texto { position: relative; z-index: 2; padding: 30px 0 26px; }
+.tv-etiqueta { display: inline-flex; align-items: center; gap: 10px; font-family: var(--fd); font-weight: 800; font-size: 15px; letter-spacing: .18em; text-transform: uppercase; color: var(--laranja-quente); margin-bottom: 14px; }
+.tv-etiqueta::before { content: ""; width: 34px; height: 4px; background: var(--laranja); }
+.tv-manchete { margin: 0 0 22px; font-family: var(--fd); font-weight: 900; text-transform: uppercase; line-height: .9; font-size: clamp(54px, 13.5vw, 150px); letter-spacing: -.01em; }
+.tv-manchete .placa { display: block; width: fit-content; padding: .06em .18em 0; margin-bottom: .06em; transform: skewX(var(--inclina)); clip-path: inset(-30% 100% -30% 0); animation: tv-placa .7s var(--suave) var(--d, 0s) forwards; }
+.tv-manchete .placa > span { display: inline-block; transform: skewX(12deg); }
+.tv-manchete .p1 { background: rgba(255, 255, 255, .08); --d: .5s; }
+.tv-manchete .p2 { background: var(--azul); --d: .7s; }
+.tv-manchete .p3 { background: var(--laranja); color: #fff; --d: .9s; text-shadow: 3px 3px 0 rgba(0, 0, 0, .25); }
+@keyframes tv-placa { to { clip-path: inset(-30% 0 -30% 0); } }
+.tv-sub { max-width: 46ch; color: #c6cfe6; font-size: clamp(15px, 3.8vw, 18px); line-height: 1.65; margin: 0 0 28px; opacity: 0; animation: tv-sobe .8s var(--suave) 1.2s forwards; }
+.tv-acoes { display: flex; flex-wrap: wrap; gap: 14px 18px; opacity: 0; animation: tv-sobe .8s var(--suave) 1.35s forwards; }
+@keyframes tv-sobe { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+.tv-palco { position: relative; z-index: 1; height: min(78vw, 520px); display: flex; justify-content: center; align-items: flex-end; order: -1; }
+.tv-palco { perspective: 1400px; align-items: center; }
+/* o atleta aparece num monitor de transmissão, com moldura, reflexo e etiqueta da câmera */
+.tv-monitor { position: relative; z-index: 1; height: 92%; aspect-ratio: 1; max-width: 100%; border-radius: 16px; overflow: hidden; transform: rotateY(-9deg) rotateX(3deg); animation: tv-liga 1.3s var(--suave) .3s both;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, .14), 0 0 0 10px #0b1020, 0 0 0 12px rgba(47, 107, 255, .45), 0 50px 110px rgba(0, 0, 0, .7), 0 0 120px rgba(47, 107, 255, .3); }
+.tv-monitor img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tv-monitor::before { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; background: repeating-linear-gradient(180deg, rgba(0, 0, 0, .08) 0 1px, transparent 1px 3px); }
+.tv-monitor::after { content: ""; position: absolute; top: -20%; bottom: -20%; width: 35%; left: -60%; z-index: 2; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .22), transparent); transform: rotate(14deg); animation: tv-reflexo 5s ease-in-out 2s infinite; }
+.tv-cam { position: absolute; z-index: 3; left: 14px; top: 12px; display: inline-flex; align-items: center; gap: 7px; font-family: var(--fd); font-weight: 900; font-size: 15px; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: rgba(4, 6, 13, .7); padding: 4px 10px; backdrop-filter: blur(4px); }
+.tv-cam i { width: 8px; height: 8px; border-radius: 50%; background: #e11d2e; box-shadow: 0 0 10px #e11d2e; animation: tv-pisca 1s steps(1) infinite; }
+@keyframes tv-liga { 0% { opacity: 0; transform: rotateY(-9deg) rotateX(3deg) scaleY(.02) scaleX(.6); filter: brightness(4); } 45% { opacity: 1; transform: rotateY(-9deg) rotateX(3deg) scaleY(.02) scaleX(1); filter: brightness(4); } 100% { opacity: 1; transform: rotateY(-9deg) rotateX(3deg); filter: none; } }
+
+/* gráficos de TV em volta do atleta */
+.tv-grafico { position: absolute; z-index: 3; font-family: var(--fd); text-transform: uppercase; opacity: 0; animation: tv-desliza .7s var(--suave) var(--d, 1.4s) forwards; }
+@keyframes tv-desliza { from { opacity: 0; transform: translateX(var(--de, -40px)); } to { opacity: 1; transform: none; } }
+.tv-terco { left: 0; bottom: 18%; display: flex; align-items: stretch; filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .5)); --d: 1.6s; }
+.tv-terco .num { display: flex; align-items: center; padding: 0 14px; background: var(--laranja); font-weight: 900; font-size: 42px; line-height: 1; transform: skewX(var(--inclina)); }
+.tv-terco .nome { padding: 8px 18px 8px 16px; background: linear-gradient(90deg, rgba(10, 16, 32, .95), rgba(30, 58, 138, .95)); transform: skewX(var(--inclina)); }
+.tv-terco .num > *, .tv-terco .nome > * { transform: skewX(12deg); display: block; }
+.tv-terco b { font-weight: 900; font-size: 24px; letter-spacing: .02em; }
+.tv-terco small { font-weight: 700; font-size: 13px; letter-spacing: .18em; color: var(--laranja-quente); }
+.tv-placarzinho { right: 0; top: 14%; --de: 40px; --d: 1.9s; background: rgba(4, 6, 13, .85); border: 1px solid rgba(255, 255, 255, .12); padding: 10px 14px; min-width: 120px; backdrop-filter: blur(6px); }
+.tv-placarzinho small { display: block; font-weight: 800; font-size: 12px; letter-spacing: .16em; color: var(--cinza); }
+.tv-placarzinho b { display: block; font-weight: 900; font-size: 38px; line-height: 1; color: var(--laranja-quente); text-shadow: 0 0 18px rgba(255, 138, 31, .55); }
+.tv-placarzinho span { font-weight: 700; font-size: 14px; color: #c6cfe6; letter-spacing: .06em; }
+.tv-categoria { right: 6%; bottom: 34%; --de: 40px; --d: 2.15s; background: var(--azul-eletrico); padding: 6px 14px; font-weight: 900; font-size: 20px; transform: skewX(var(--inclina)); box-shadow: 4px 4px 0 #fff; }
+.tv-categoria > span { display: inline-block; transform: skewX(12deg); }
+
+/* ---------- letreiro de LED de beira de quadra ---------- */
+.tv-led { position: relative; z-index: 4; margin: 0 -2%; padding: 14px 0; overflow: hidden; white-space: nowrap; transform: rotate(-1.6deg);
+  background: radial-gradient(rgba(255, 138, 31, .18) 1.1px, transparent 1.6px) 0 0 / 6px 6px, #020308;
+  border-top: 3px solid #1a1f2e; border-bottom: 3px solid #1a1f2e; box-shadow: 0 20px 60px rgba(0, 0, 0, .6); }
+.tv-led-trilho { display: inline-flex; animation: tv-corre 34s linear infinite; }
+.tv-led span { font-family: var(--fd); font-weight: 900; font-size: clamp(24px, 5vw, 38px); letter-spacing: .08em; text-transform: uppercase; color: var(--laranja-quente); text-shadow: 0 0 12px rgba(255, 138, 31, .8); padding: 0 28px; }
+.tv-led span:nth-child(3n + 2) { color: #8fb0ff; text-shadow: 0 0 12px rgba(120, 160, 255, .8); }
+@keyframes tv-corre { to { transform: translateX(-50%); } }
+
+/* ---------- seções ---------- */
+.tv-secao { position: relative; padding: 90px max(16px, 5vw); max-width: 1280px; margin: 0 auto; }
+.tv-titulo { font-family: var(--fd); font-weight: 900; text-transform: uppercase; font-size: clamp(44px, 9vw, 96px); line-height: .9; margin: 0 0 18px; }
+.tv-titulo em { font-style: normal; color: var(--laranja-quente); }
+.tv-texto { color: #aeb9d6; font-size: 16px; line-height: 1.75; max-width: 52ch; margin: 0 0 28px; }
+
+/* entra quando aparece na tela (classe ligada pelo TvEfeitos) */
+.tv-revela { opacity: 0; transform: translateY(40px); transition: opacity .8s ease, transform .9s var(--suave); transition-delay: var(--d, 0s); }
+.tv-revela.ok { opacity: 1; transform: none; }
+
+/* ---------- placar do ginásio ---------- */
+.tv-placar { position: relative; padding: 18px; border-radius: 6px; background: linear-gradient(180deg, #1b2236, #0b0f1c); box-shadow: 0 0 0 4px #2a3350, 0 30px 80px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .1); }
+.tv-placar::before, .tv-placar::after { content: ""; position: absolute; top: -26px; width: 6px; height: 26px; background: #2a3350; }
+.tv-placar::before { left: 22%; } .tv-placar::after { right: 22%; }
+.tv-placar-topo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-family: var(--fd); font-weight: 900; letter-spacing: .14em; text-transform: uppercase; color: var(--cinza); font-size: 15px; }
+.tv-placar-topo b { color: #fff; font-size: 20px; }
+.tv-placar-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tv-cel { padding: 16px 14px 14px; background: radial-gradient(rgba(255, 138, 31, .14) 1px, transparent 1.5px) 0 0 / 5px 5px, #020308; box-shadow: inset 0 0 0 1px rgba(255, 138, 31, .2); text-align: center; }
+.tv-cel b { display: block; font-family: var(--fd); font-weight: 900; font-size: clamp(42px, 11vw, 76px); line-height: 1; color: var(--laranja-quente); text-shadow: 0 0 18px rgba(255, 138, 31, .7); white-space: nowrap; }
+.tv-cel span { display: block; margin-top: 6px; font-family: var(--fd); font-weight: 800; font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: #8fb0ff; }
+
+/* ---------- replay: tela de TV com o perfil ---------- */
+.tv-dupla { display: grid; grid-template-columns: 1fr; gap: 48px; align-items: center; }
+.tv-tela { position: relative; padding: 14px; border-radius: 18px; background: linear-gradient(145deg, #1c2438, #070a14); box-shadow: 0 40px 100px rgba(0, 0, 0, .6), inset 0 1px 0 rgba(255, 255, 255, .12); }
+.tv-tela-dentro { position: relative; border-radius: 10px; overflow: hidden; background: #050813; padding: 22px 20px 20px; }
+.tv-tela-dentro::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(180deg, rgba(255, 255, 255, .025) 0 1px, transparent 1px 3px); }
+.tv-replay { position: absolute; top: 12px; right: 12px; z-index: 2; font-family: var(--fd); font-weight: 900; font-size: 15px; letter-spacing: .14em; background: var(--laranja); padding: 3px 10px; transform: skewX(var(--inclina)); }
+.tv-replay > span { display: inline-block; transform: skewX(12deg); }
+.tv-perfil-cab small { font-family: var(--fd); font-weight: 800; letter-spacing: .16em; color: var(--cinza); text-transform: uppercase; font-size: 13px; }
+.tv-perfil-cab b { display: block; font-family: var(--fd); font-weight: 900; font-size: 30px; text-transform: uppercase; }
+.tv-numeros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 18px 0; }
+.tv-numeros div { padding: 12px 8px; text-align: center; background: rgba(255, 255, 255, .04); border-top: 3px solid var(--c); }
+.tv-numeros b { display: block; font-family: var(--fd); font-weight: 900; font-size: 40px; line-height: 1; color: var(--c); }
+.tv-numeros span { font-size: 12px; color: var(--cinza); font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
+.tv-barras { display: flex; align-items: flex-end; gap: 8px; height: 120px; padding-top: 16px; }
+.tv-barras div { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%; }
+.tv-barras i { width: 100%; height: var(--h); background: linear-gradient(180deg, var(--azul-eletrico), var(--azul)); transform-origin: bottom; transform: scaleY(0); transition: transform .9s var(--mola); transition-delay: var(--d); }
+.tv-barras div:last-child i, .tv-barras div:nth-last-child(2) i { background: linear-gradient(180deg, var(--laranja-quente), var(--laranja)); }
+.ok .tv-barras i { transform: scaleY(1); }
+.tv-barras small { font-family: var(--fd); font-weight: 800; font-size: 12px; color: var(--cinza); letter-spacing: .08em; }
+
+/* ---------- escalação: cards de jogada ---------- */
+.tv-cards { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.tv-card { position: relative; padding: 24px 22px 22px; background: linear-gradient(160deg, #101935, #070b18); border: 1px solid rgba(255, 255, 255, .07); overflow: hidden; transition: transform .35s var(--mola), border-color .3s; }
+.tv-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--laranja), var(--azul-eletrico)); transform: scaleX(0); transform-origin: left; transition: transform .45s var(--suave); }
+.tv-card::after { content: ""; position: absolute; top: -50%; bottom: -50%; width: 30%; left: -60%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .09), transparent); transform: rotate(18deg); transition: left .7s ease; }
+.tv-card:hover { transform: translateY(-8px); border-color: rgba(249, 115, 22, .45); }
+.tv-card:hover::before { transform: scaleX(1); }
+.tv-card:hover::after { left: 130%; }
+.tv-card .n { position: absolute; right: 14px; top: 6px; font-family: var(--fd); font-weight: 900; font-size: 64px; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, .12); }
+.tv-card .ic { display: inline-flex; width: 52px; height: 52px; align-items: center; justify-content: center; font-size: 24px; background: var(--c); transform: skewX(var(--inclina)); margin-bottom: 16px; }
+.tv-card .ic > span { transform: skewX(12deg); }
+.tv-card h3 { margin: 0 0 6px; font-family: var(--fd); font-weight: 900; font-size: 26px; text-transform: uppercase; letter-spacing: .01em; }
+.tv-card p { margin: 0; color: #9eabca; font-size: 14.5px; line-height: 1.7; }
+
+/* ---------- carreira em números ---------- */
+.tv-carreira { position: relative; display: grid; grid-template-columns: 1fr; overflow: hidden; background: #000; }
+.tv-carreira-foto { position: relative; min-height: 380px; }
+.tv-carreira-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.tv-carreira-foto::after { content: ""; position: absolute; inset: 0; background: linear-gradient(0deg, #000, transparent 55%); }
+.tv-carreira-texto { position: relative; padding: 0 max(16px, 5vw) 70px; }
+.tv-selo { display: inline-flex; gap: 8px; align-items: center; font-family: var(--fd); font-weight: 900; font-size: 15px; letter-spacing: .14em; text-transform: uppercase; color: #fff; background: var(--azul-eletrico); padding: 5px 14px; transform: skewX(var(--inclina)); margin-bottom: 18px; }
+.tv-selo > span { transform: skewX(12deg); }
+
+/* ---------- planos ---------- */
+.tv-planos { display: grid; grid-template-columns: 1fr; gap: 22px; margin-top: 34px; }
+.tv-plano { position: relative; padding: 30px 26px 26px; background: linear-gradient(160deg, #0f1730, #060a16); border: 1px solid rgba(255, 255, 255, .08); transition: transform .35s var(--mola); }
+.tv-plano:hover { transform: translateY(-8px); }
+.tv-plano.craque { border: none; background: linear-gradient(160deg, #1e3a8a, #0a1438 70%); box-shadow: 0 0 0 2px var(--laranja), 0 30px 80px rgba(249, 115, 22, .25); overflow: hidden; }
+.tv-plano.craque::before { content: ""; position: absolute; inset: -40%; background: conic-gradient(from 0deg, transparent, rgba(255, 138, 31, .16), transparent 30%, rgba(120, 160, 255, .14), transparent 60%); animation: tv-gira 9s linear infinite; pointer-events: none; }
+@keyframes tv-gira { to { transform: rotate(360deg); } }
+.tv-plano > * { position: relative; }
+.tv-plano .tag { display: inline-block; font-family: var(--fd); font-weight: 900; font-size: 15px; letter-spacing: .14em; text-transform: uppercase; padding: 4px 12px; background: rgba(255, 255, 255, .08); transform: skewX(var(--inclina)); }
+.tv-plano.craque .tag { background: var(--laranja); }
+.tv-plano .tag > span { display: inline-block; transform: skewX(12deg); }
+.tv-plano h3 { margin: 16px 0 4px; font-family: var(--fd); font-weight: 900; font-size: 34px; text-transform: uppercase; }
+.tv-preco { display: flex; align-items: baseline; gap: 6px; margin-bottom: 6px; }
+.tv-preco b { font-family: var(--fd); font-weight: 900; font-size: 72px; line-height: 1; color: var(--laranja-quente); text-shadow: 0 0 22px rgba(255, 138, 31, .45); }
+.tv-preco span { color: var(--cinza); font-weight: 700; }
+.tv-plano p.frase { color: #c6cfe6; margin: 0 0 18px; }
+.tv-plano ul { list-style: none; padding: 0; margin: 0 0 24px; display: grid; gap: 10px; }
+.tv-plano li { display: flex; gap: 10px; align-items: flex-start; color: #dbe2f5; font-size: 15px; }
+.tv-plano li::before { content: ""; flex-shrink: 0; width: 18px; height: 18px; margin-top: 2px; background: var(--laranja); clip-path: polygon(14% 52%, 0 66%, 38% 100%, 100% 22%, 86% 8%, 38% 72%); }
+.tv-plano .btn-largo { width: 100%; }
+.tv-plano small.rodape { display: block; text-align: center; margin-top: 14px; color: var(--cinza); font-size: 12.5px; }
+
+/* ---------- final ---------- */
+.tv-final { position: relative; overflow: hidden; padding: 110px max(16px, 5vw); text-align: center; background: var(--azul); isolation: isolate; }
+.tv-final::before { content: ""; position: absolute; inset: 0; z-index: -1; background: repeating-linear-gradient(-12deg, transparent 0 60px, rgba(255, 255, 255, .05) 60px 120px); animation: tv-listras 6s linear infinite; }
+@keyframes tv-listras { to { background-position: 0 240px; } }
+.tv-final .tv-titulo { max-width: 16ch; margin: 0 auto 30px; }
+
+.tv-rodape { padding: 50px max(16px, 5vw) 36px; background: #020308; color: var(--cinza); font-size: 14px; }
+.tv-rodape-grade { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 30px; }
+.tv-rodape img { height: 44px; width: auto; background: #fff; border-radius: 8px; padding: 2px; margin-bottom: 12px; }
+.tv-rodape h4 { margin: 0 0 10px; font-family: var(--fd); font-weight: 900; font-size: 18px; letter-spacing: .1em; text-transform: uppercase; color: #fff; }
+.tv-rodape a { display: block; padding: 3px 0; transition: color .2s; }
+.tv-rodape a:hover { color: var(--laranja-quente); }
+.tv-rodape-fim { max-width: 1280px; margin: 34px auto 0; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, .07); font-size: 12.5px; }
+
+/* ---------- telas maiores ---------- */
+@media (min-width: 900px) {
+  .tv-abertura { grid-template-columns: 1.05fr .95fr; align-items: center; gap: 2vw; padding-top: 80px; }
+  .tv-abertura-texto { padding-bottom: 0; }
+  .tv-manchete { font-size: clamp(64px, 7.6vw, 128px); }
+  .tv-palco { order: 0; height: min(84vh, 760px); }
+  .tv-placar-grade { grid-template-columns: repeat(4, 1fr); }
+  .tv-dupla { grid-template-columns: 1fr 1fr; gap: 70px; }
+  .tv-cards { grid-template-columns: repeat(3, 1fr); }
+  .tv-carreira { grid-template-columns: 1fr 1fr; min-height: 620px; }
+  .tv-carreira-foto::after { background: linear-gradient(90deg, transparent 40%, #000); }
+  .tv-carreira-texto { align-self: center; padding: 60px 5vw; }
+  .tv-planos { grid-template-columns: 1fr 1fr; max-width: 920px; }
+  .tv-rodape-grade { grid-template-columns: 2fr 1fr 1fr; }
+}
+.tv-aovivo, .tv-btn { white-space: nowrap; }
+@media (max-width: 520px) {
+  .tv-relogio, .tv-link.some-cel { display: none; }
+  .tv-topo { padding: 10px 14px; }
+  .tv-topo-esq { gap: 10px; }
+  .tv-aovivo { font-size: 12px; padding: 3px 9px 3px 8px; }
+  .tv-link { padding: 8px 6px; font-size: 13px; }
+  .tv-btn.pequeno { padding: 8px 12px; font-size: 14px; }
+  .tv-monitor { height: 100%; }
+  .tv-terco .num { font-size: 30px; } .tv-terco b { font-size: 18px; }
+  .tv-placarzinho b { font-size: 28px; }
+}
