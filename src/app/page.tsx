@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Button from "@/components/Button";
 
-const FD = "'Outfit', 'Inter', system-ui, sans-serif";
+const FD = "'Big Shoulders Display', 'Outfit', 'Inter', system-ui, sans-serif";
 
 export default function LandingPage() {
   return (

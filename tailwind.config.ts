@@ -17,7 +17,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
-        display: ["Outfit", "Inter", "system-ui", "sans-serif"],
+        display: ["Big Shoulders Display", "Outfit", "Inter", "system-ui", "sans-serif"],
       },
       borderRadius: {
         card: "16px",
